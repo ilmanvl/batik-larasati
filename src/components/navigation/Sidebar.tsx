@@ -50,7 +50,7 @@ export function Sidebar({ user }: SidebarProps) {
               { href: '/jurnal', label: 'Jurnal Umum', icon: BookOpen },
               { href: '/buku-besar', label: 'Buku Besar', icon: Scale },
               { href: '/neraca-saldo', label: 'Neraca Saldo', icon: FileSpreadsheet },
-              { href: '/laporan', label: 'Laporan Keuangan', icon: TrendingUp },
+              { href: '/laporan/laba-rugi', label: 'Laporan Keuangan', icon: TrendingUp },
               { href: '/akun', label: 'Bagan Akun & Periode', icon: FolderTree },
             ],
           },
@@ -163,7 +163,10 @@ export function Sidebar({ user }: SidebarProps) {
               </div>
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== '/dashboard' && pathname.startsWith(item.href)) ||
+                  (item.href === '/laporan/laba-rugi' && pathname.startsWith('/laporan'));
                 return (
                   <Link
                     key={item.href}
