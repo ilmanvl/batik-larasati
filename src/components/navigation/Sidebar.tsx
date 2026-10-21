@@ -10,6 +10,7 @@ import {
   Receipt,
   BookOpen,
   Scale,
+  FileSpreadsheet,
   TrendingUp,
   FolderTree,
   Users,
@@ -48,6 +49,7 @@ export function Sidebar({ user }: SidebarProps) {
             items: [
               { href: '/jurnal', label: 'Jurnal Umum', icon: BookOpen },
               { href: '/buku-besar', label: 'Buku Besar', icon: Scale },
+              { href: '/neraca-saldo', label: 'Neraca Saldo', icon: FileSpreadsheet },
               { href: '/laporan', label: 'Laporan Keuangan', icon: TrendingUp },
               { href: '/akun', label: 'Bagan Akun & Periode', icon: FolderTree },
             ],

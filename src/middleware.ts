@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 
-const FINANCE_ROUTES = ['/jurnal', '/buku-besar', '/laporan', '/akun'];
+const FINANCE_ROUTES = ['/jurnal', '/buku-besar', '/neraca-saldo', '/laporan', '/akun'];
 const DIREKTUR_ROUTES = ['/pengguna', '/audit-log'];
 
 export async function middleware(request: NextRequest) {
