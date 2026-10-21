@@ -140,16 +140,18 @@ export default async function PengajuanPage() {
           </p>
         </div>
 
-        {/* Tombol Utama Buat Pengajuan Baru */}
-        <div className="self-start sm:self-auto relative z-10">
-          <Link
-            href="/pengajuan/baru"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>Buat Pengajuan Baru</span>
-          </Link>
-        </div>
+        {/* Tombol Utama Buat Pengajuan Baru (Hanya untuk Staf & Akuntan, patuh pada BR-09) */}
+        {role !== 'direktur' && (
+          <div className="self-start sm:self-auto relative z-10">
+            <Link
+              href="/pengajuan/baru"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Buat Pengajuan Baru</span>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* 2. Kartu Ringkasan Cepat */}

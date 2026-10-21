@@ -2,12 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import type { PeranType, StatusPengajuan } from '@/types/database';
 import {
   verifikasiPengajuanAction,
   setujuiDirekturAction,
   tolakAtauRevisiAction,
   cairkanPengajuanAction,
+  ajukanDokumenAction,
+  batalkanDokumenAction,
 } from './actions';
 import {
   CheckCircle2,
@@ -18,6 +21,7 @@ import {
   Banknote,
   FileCheck,
   ShieldAlert,
+  Edit3,
 } from 'lucide-react';
 
 interface AkunKasItem {
@@ -139,24 +143,44 @@ export function ActionApprovalPanel({
     }
   };
 
+  // 5. Handler Ajukan Dokumen oleh Owner
+  const handleAjukanOwner = async () => {
+    setLoading(true);
+    setFeedback(null);
+    const res = await ajukanDokumenAction(pengajuan.id);
+    if (!res.success) {
+      setFeedback({ type: 'error', text: res.message || 'Gagal mengajukan dokumen.' });
+      setLoading(false);
+    } else {
+      setFeedback({ type: 'success', text: res.message || 'Pengajuan berhasil dikirimkan.' });
+      router.refresh();
+      setLoading(false);
+    }
+  };
+
+  // 6. Handler Batalkan Dokumen oleh Owner
+  const handleBatalkanOwner = async () => {
+    if (!confirm('Apakah Anda yakin ingin membatalkan pengajuan ini? Dokumen yang dibatalkan tidak dapat diproses lagi.')) return;
+    setLoading(true);
+    setFeedback(null);
+    const res = await batalkanDokumenAction(pengajuan.id);
+    if (!res.success) {
+      setFeedback({ type: 'error', text: res.message || 'Gagal membatalkan pengajuan.' });
+      setLoading(false);
+    } else {
+      setFeedback({ type: 'success', text: res.message || 'Pengajuan berhasil dibatalkan.' });
+      router.refresh();
+      setLoading(false);
+    }
+  };
+
   // Evaluasi apakah user memiliki aksi pada pengajuan ini
   const canAkuntanVerify = currentRole === 'akuntan' && pengajuan.status === 'diajukan';
   const canDirekturApprove = currentRole === 'direktur' && pengajuan.status === 'menunggu_direktur';
   const canAkuntanPay = currentRole === 'akuntan' && pengajuan.status === 'disetujui';
+  const canOwnerAct = isOwner && ['draf', 'perlu_revisi'].includes(pengajuan.status);
 
-  if (!canAkuntanVerify && !canDirekturApprove && !canAkuntanPay) {
-    if (pengajuan.status === 'perlu_revisi' && isOwner) {
-      return (
-        <div className="p-4 rounded-3xl liquid-glass border-amber-500/40 text-amber-300 text-xs flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0" />
-            <span>
-              Pengajuan ini memerlukan revisi berdasarkan catatan peninjau di bawah. Silakan periksa kembali nota dan keterangan Anda.
-            </span>
-          </div>
-        </div>
-      );
-    }
+  if (!canAkuntanVerify && !canDirekturApprove && !canAkuntanPay && !canOwnerAct) {
     return null;
   }
 
@@ -170,7 +194,11 @@ export function ActionApprovalPanel({
           </h2>
         </div>
         <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-neutral-300 border border-white/[0.12]">
-          Hak Akses: <strong className="text-[#d4af37] uppercase">{currentRole}</strong>
+          {canOwnerAct ? (
+            <span className="text-[#d4af37]">PEMOHON (OWNER)</span>
+          ) : (
+            <>Hak Akses: <strong className="text-[#d4af37] uppercase">{currentRole}</strong></>
+          )}
         </span>
       </div>
 
@@ -318,6 +346,13 @@ export function ActionApprovalPanel({
       {!modePeninjauan && !showBayarModal && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="text-xs text-neutral-400">
+            {canOwnerAct && (
+              <span>
+                {pengajuan.status === 'perlu_revisi'
+                  ? 'Pengajuan ini membutuhkan perbaikan. Anda dapat mengedit rincian atau membatalkan dokumen.'
+                  : 'Dokumen berstatus Draf. Anda dapat mengedit rincian atau mengirimkannya ke bagian keuangan.'}
+              </span>
+            )}
             {canAkuntanVerify && (
               <span>
                 Verifikasi nota pengeluaran ini.{' '}
@@ -335,6 +370,38 @@ export function ActionApprovalPanel({
           </div>
 
           <div className="flex items-center gap-2.5">
+            {/* Tombol Aksi untuk Owner Pengajuan (Draf & Perlu Revisi) */}
+            {canOwnerAct && (
+              <>
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={handleBatalkanOwner}
+                  className="px-4 py-2 rounded-2xl text-xs font-semibold text-rose-300 hover:bg-rose-500/10 border border-rose-500/30 transition-all flex items-center gap-1.5"
+                >
+                  <XCircle className="w-4 h-4 text-rose-400" />
+                  <span>Batalkan Pengajuan</span>
+                </button>
+
+                <Link
+                  href={`/pengajuan/${pengajuan.id}/edit`}
+                  className="px-4 py-2 rounded-2xl text-xs font-semibold text-white bg-white/[0.08] hover:bg-white/[0.15] border border-white/[0.12] transition-all flex items-center gap-1.5"
+                >
+                  <Edit3 className="w-4 h-4 text-[#d4af37]" />
+                  <span>Edit Rincian</span>
+                </Link>
+
+                <button
+                  type="button"
+                  disabled={loading}
+                  onClick={handleAjukanOwner}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
+                >
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  <span>Ajukan Dokumen Sekarang</span>
+                </button>
+              </>
+            )}
             {/* Tombol Tolak / Minta Revisi (untuk Akuntan & Direktur) */}
             {(canAkuntanVerify || canDirekturApprove) && (
               <>

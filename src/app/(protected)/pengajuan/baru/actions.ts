@@ -20,6 +20,16 @@ export async function submitPengajuanAction(formData: FormData): Promise<{
       return { success: false, message: 'Sesi Anda telah berakhir. Silakan masuk kembali.' };
     }
 
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('peran')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.peran === 'direktur') {
+      return { success: false, message: 'Direktur tidak diperkenankan membuat pengajuan biaya (sesuai aturan bisnis BR-09).' };
+    }
+
     // 1. Ekstrak dan validasi input
     const jenis = (formData.get('jenis') as JenisPengajuan) || 'reimburse';
     const tanggalTransaksi = formData.get('tanggal_transaksi') as string;

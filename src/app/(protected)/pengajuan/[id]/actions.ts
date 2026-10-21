@@ -267,3 +267,110 @@ export async function cairkanPengajuanAction(
     return { success: false, message: err.message || 'Terjadi kesalahan sistem.' };
   }
 }
+
+// 5. Ajukan Dokumen (Owner mengajukan draf atau dokumen yang telah direvisi)
+export async function ajukanDokumenAction(pengajuanId: number): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, message: 'Sesi login Anda telah berakhir.' };
+    }
+
+    const { data: pengajuan } = await supabase
+      .from('pengajuan')
+      .select('id, pengaju_id, status, bukti_path, jenis')
+      .eq('id', pengajuanId)
+      .single();
+
+    if (!pengajuan || pengajuan.pengaju_id !== user.id) {
+      return { success: false, message: 'Anda tidak memiliki hak akses untuk mengajukan dokumen ini.' };
+    }
+
+    if (!['draf', 'perlu_revisi'].includes(pengajuan.status)) {
+      return { success: false, message: `Dokumen dengan status '${pengajuan.status}' tidak dapat diajukan.` };
+    }
+
+    // Pastikan berkas nota sudah terunggah untuk reimbursement
+    if (pengajuan.jenis === 'reimburse' && !pengajuan.bukti_path) {
+      return { success: false, message: 'Bukti nota fisik pengeluaran wajib diunggah sebelum pengajuan.' };
+    }
+
+    const { error } = await supabase
+      .from('pengajuan')
+      .update({
+        status: 'diajukan',
+        diajukan_pada: new Date().toISOString(),
+      })
+      .eq('id', pengajuanId);
+
+    if (error) {
+      return { success: false, message: 'Gagal mengajukan dokumen: ' + error.message };
+    }
+
+    revalidatePath('/pengajuan');
+    revalidatePath(`/pengajuan/${pengajuanId}`);
+    revalidatePath('/dashboard');
+
+    return { success: true, message: 'Pengajuan berhasil dikirimkan ke Akuntan untuk diverifikasi.' };
+  } catch (err: any) {
+    return { success: false, message: 'Terjadi kesalahan sistem: ' + (err?.message || '') };
+  }
+}
+
+// 6. Batalkan Pengajuan (Owner membatalkan dokumen, strictly 'draf' atau 'perlu_revisi' sesuai BR-08)
+export async function batalkanDokumenAction(pengajuanId: number): Promise<{
+  success: boolean;
+  message?: string;
+}> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, message: 'Sesi login Anda telah berakhir.' };
+    }
+
+    const { data: pengajuan } = await supabase
+      .from('pengajuan')
+      .select('id, pengaju_id, status')
+      .eq('id', pengajuanId)
+      .single();
+
+    if (!pengajuan || pengajuan.pengaju_id !== user.id) {
+      return { success: false, message: 'Anda tidak memiliki wewenang membatalkan dokumen ini.' };
+    }
+
+    if (!['draf', 'perlu_revisi'].includes(pengajuan.status)) {
+      return {
+        success: false,
+        message: 'Hanya dokumen dengan status draf atau perlu revisi yang dapat dibatalkan (sesuai BR-08).',
+      };
+    }
+
+    const { error } = await supabase
+      .from('pengajuan')
+      .update({ status: 'dibatalkan' })
+      .eq('id', pengajuanId);
+
+    if (error) {
+      return { success: false, message: 'Gagal membatalkan pengajuan: ' + error.message };
+    }
+
+    revalidatePath('/pengajuan');
+    revalidatePath(`/pengajuan/${pengajuanId}`);
+    revalidatePath('/dashboard');
+
+    return { success: true, message: 'Pengajuan berhasil dibatalkan.' };
+  } catch (err: any) {
+    return { success: false, message: 'Terjadi kesalahan sistem: ' + (err?.message || '') };
+  }
+}
