@@ -187,10 +187,13 @@ export default async function LabaRugiPage({
           <TrendingUp className="w-4 h-4" />
           <span>Laba Rugi</span>
         </span>
-        <span className="px-4 py-2 rounded-xl text-neutral-500 cursor-not-allowed flex items-center gap-2">
+        <Link
+          href="/laporan/neraca"
+          className="px-4 py-2 rounded-xl text-neutral-400 hover:text-white transition-colors flex items-center gap-2"
+        >
           <Scale className="w-4 h-4" />
-          <span>Posisi Keuangan (Tahap 11)</span>
-        </span>
+          <span>Posisi Keuangan (Neraca)</span>
+        </Link>
       </div>
 
       {/* 3. Stat KPI Cards */}
