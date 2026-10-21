@@ -12,4 +12,5 @@ const nextConfig: NextConfig = {
   },
 };
 
+// Next.js Config for CV Batik Larasati - Final Refinement
 export default nextConfig;

@@ -2,6 +2,11 @@ import { createClient } from '@/lib/supabase/server';
 import type { PeranType } from '@/types/database';
 import Link from 'next/link';
 import {
+  getFinanceDashboardData,
+  getStafDashboardData,
+  formatRupiah,
+} from '@/lib/services/dashboard';
+import {
   Wallet,
   TrendingUp,
   TrendingDown,
@@ -14,6 +19,7 @@ import {
   ArrowRight,
   PlusCircle,
   FileSpreadsheet,
+  CheckCircle,
 } from 'lucide-react';
 
 export const metadata = {
@@ -36,7 +42,6 @@ export default async function DashboardPage() {
   const role = (profile?.peran || 'staf') as PeranType;
   const isFinance = ['akuntan', 'direktur'].includes(role);
 
-  // Format tanggal Indonesia
   const today = new Intl.DateTimeFormat('id-ID', {
     weekday: 'long',
     day: 'numeric',
@@ -44,169 +49,175 @@ export default async function DashboardPage() {
     year: 'numeric',
   }).format(new Date());
 
+  const financeData = isFinance ? await getFinanceDashboardData(role) : null;
+  const stafData = !isFinance ? await getStafDashboardData(user!.id) : null;
+
   return (
     <div className="space-y-6">
-      {/* Header Sambutan */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-7 rounded-2xl bg-gradient-to-r from-amber-900 via-amber-800 to-stone-900 text-white shadow-lg shadow-amber-950/10">
-        <div>
+      {/* Header Sambutan: Apple iOS Liquid Glass */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 sm:p-7 rounded-3xl liquid-glass-header text-white">
+        <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xs uppercase tracking-wider text-amber-200/90 font-semibold">
+            <span className="text-xs uppercase tracking-wider text-[#d4af37] font-bold">
               CV Batik Larasati
             </span>
-            <span className="text-amber-400">·</span>
-            <span className="text-xs text-amber-100/70">{today}</span>
+            <span className="text-neutral-600">·</span>
+            <span className="text-xs text-neutral-400">{today}</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Selamat datang, {profile?.nama_lengkap}!
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Selamat datang, <span className="text-[#d4af37]">{profile?.nama_lengkap}</span>!
           </h1>
-          <p className="text-xs sm:text-sm text-amber-100/80 mt-1 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-neutral-300 mt-1 max-w-2xl leading-relaxed">
             {isFinance
-              ? 'Ringkasan posisi kas, pergerakan laba rugi, dan verifikasi dokumen keuangan UMKM.'
-              : 'Pantau status pengajuan pengeluaran dan reimbursement nota operasional Anda di sini.'}
+              ? 'Ringkasan posisi kas, pergerakan laba rugi, dan antrean verifikasi dokumen akuntansi.'
+              : 'Pantau status pengajuan pengeluaran dan reimbursement nota operasional Anda.'}
           </p>
         </div>
-        <div className="self-start md:self-auto flex items-center gap-2">
-          <span className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-amber-500/20 text-amber-200 border border-amber-400/30">
+        <div className="self-start md:self-auto relative z-10">
+          <span className="px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#d4af37]/20 text-[#d4af37] border border-[#d4af37]/50 shadow-lg shadow-[#d4af37]/10 backdrop-blur-xl">
             Peran: {role}
           </span>
         </div>
       </div>
 
-      {/* Grid Kartu Metrik - Sesuai Peran */}
-      {isFinance ? (
+      {/* DASHBOARD UNTUK TIM FINANCE (AKUNTAN & DIREKTUR) */}
+      {isFinance && financeData && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-600">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
               Ikhtisar Keuangan Berjalan
             </h2>
-            <span className="text-xs text-stone-400">Periode: Oktober 2026</span>
+            <span className="text-xs font-semibold text-[#d4af37]">
+              Periode: {financeData.periodeAktif.nama}
+            </span>
           </div>
 
+          {/* 6 Kartu Metrik Keuangan Apple iOS Liquid Glass */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-            {/* 1. Saldo Kas & Bank */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            {/* 1. Total Kas & Bank */}
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Total Kas & Bank
                 </span>
-                <div className="p-2.5 rounded-xl bg-amber-50 text-amber-800">
+                <div className="p-2.5 rounded-2xl bg-[#d4af37]/15 text-[#d4af37] border border-[#d4af37]/30">
                   <Wallet className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-                Rp 144.382.000
+              <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                {formatRupiah(financeData.totalKasBank)}
               </div>
-              <p className="text-[11px] text-stone-500 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <span>Saldo aktif Kas Kecil & Rekening BCA</span>
+              <p className="text-[11px] text-neutral-400 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Kas Kecil & Rekening Bank Aktif</span>
               </p>
             </div>
 
-            {/* 2. Pendapatan Berjalan */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            {/* 2. Pendapatan Bulan Ini */}
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Pendapatan (Bulan Ini)
                 </span>
-                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-800">
+                <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
                   <TrendingUp className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-emerald-800 tracking-tight">
-                Rp 21.350.000
+              <div className="text-2xl sm:text-3xl font-bold text-emerald-400 tracking-tight">
+                {formatRupiah(financeData.pendapatanBulanIni)}
               </div>
-              <p className="text-[11px] text-emerald-600 font-medium">
-                Penjualan kain & kelas membatik wisata
+              <p className="text-[11px] text-emerald-300/80 font-medium">
+                Penjualan kain & kelas batik wisata
               </p>
             </div>
 
-            {/* 3. Beban Berjalan */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            {/* 3. Beban Bulan Ini */}
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Beban (Bulan Ini)
                 </span>
-                <div className="p-2.5 rounded-xl bg-rose-50 text-rose-800">
+                <div className="p-2.5 rounded-2xl bg-rose-500/20 text-rose-400 border border-rose-500/30">
                   <TrendingDown className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-rose-800 tracking-tight">
-                Rp 8.770.000
+              <div className="text-2xl sm:text-3xl font-bold text-rose-400 tracking-tight">
+                {formatRupiah(financeData.bebanBulanIni)}
               </div>
-              <p className="text-[11px] text-stone-500">
-                Operasional toko, bahan lilin & pewarna
+              <p className="text-[11px] text-neutral-400">
+                Bahan baku, malam, operasional & toko
               </p>
             </div>
 
-            {/* 4. Laba / Rugi Berjalan */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            {/* 4. Laba Bersih Bulan Ini */}
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Laba Bersih Berjalan
                 </span>
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-800">
+                <div className="p-2.5 rounded-2xl bg-[#d4af37]/20 text-[#d4af37] border border-[#d4af37]/30">
                   <CircleDollarSign className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-                Rp 12.580.000
+              <div
+                className={`text-2xl sm:text-3xl font-bold tracking-tight ${
+                  financeData.labaRugiBulanIni >= 0 ? 'text-[#d4af37]' : 'text-rose-400'
+                }`}
+              >
+                {formatRupiah(financeData.labaRugiBulanIni)}
               </div>
-              <p className="text-[11px] text-emerald-600 font-medium">
-                Surplus operasional bulan berjalan
+              <p className="text-[11px] text-neutral-300 font-medium">
+                {financeData.labaRugiBulanIni >= 0 ? 'Surplus operasional' : 'Defisit operasional'}
               </p>
             </div>
 
-            {/* 5. Pengajuan Menunggu */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
-                <span className="text-xs font-semibold uppercase tracking-wider">
+            {/* 5. Antrean Persetujuan */}
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
+                <span className="text-xs font-semibold uppercase tracking-wider truncate">
                   Antrean Persetujuan
                 </span>
-                <div className="p-2.5 rounded-xl bg-orange-50 text-orange-800">
+                <div className="p-2.5 rounded-2xl bg-orange-500/20 text-orange-400 border border-orange-500/30">
                   <Clock className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-orange-800 tracking-tight">
-                3 Pengajuan
+              <div className="text-2xl sm:text-3xl font-bold text-orange-400 tracking-tight">
+                {financeData.antreanPersetujuan} Dokumen
               </div>
-              <Link
-                href="/pengajuan"
-                className="text-[11px] text-amber-800 font-semibold inline-flex items-center gap-1 hover:underline"
-              >
-                <span>Buka daftar pengajuan</span>
-                <ArrowRight className="w-3 h-3" />
-              </Link>
+              <p className="text-[11px] text-neutral-400 truncate">{financeData.antreanLabel}</p>
             </div>
 
             {/* 6. Status Periode */}
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-3 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Status Pembukuan
                 </span>
-                <div className="p-2.5 rounded-xl bg-purple-50 text-purple-800">
+                <div className="p-2.5 rounded-2xl bg-white/[0.08] text-[#d4af37] border border-white/[0.12]">
                   <Calendar className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl sm:text-3xl font-bold text-stone-900 tracking-tight">
-                Oktober 2026
+              <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                {financeData.periodeAktif.nama}
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-emerald-600 font-medium">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span>Periode Terbuka (0 Draf Belum Seimbang)</span>
+              <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>
+                  Status {financeData.periodeAktif.status} ({financeData.periodeAktif.draftCount} draf)
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Quick Actions Bar */}
-          <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500 mb-3">
+          {/* Quick Actions Bar (Apple iOS Liquid Glass) */}
+          <div className="p-6 rounded-3xl liquid-glass space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-neutral-400">
               Aksi Cepat
             </h3>
             <div className="flex flex-wrap gap-2.5">
               <Link
                 href="/pengajuan"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-amber-900 text-white hover:bg-amber-800 shadow-sm transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
               >
                 <PlusCircle className="w-4 h-4" />
                 <span>Buat Pengajuan Baru</span>
@@ -214,88 +225,170 @@ export default async function DashboardPage() {
               {role === 'akuntan' && (
                 <Link
                   href="/jurnal"
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-stone-100 text-stone-800 hover:bg-stone-200 border border-stone-300 transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold liquid-glass liquid-glass-hover text-neutral-200 hover:text-white transition-all shadow-sm"
                 >
-                  <FileSpreadsheet className="w-4 h-4 text-stone-600" />
+                  <FileSpreadsheet className="w-4 h-4 text-[#d4af37]" />
                   <span>Catat Jurnal Umum</span>
                 </Link>
               )}
               <Link
                 href="/laporan"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-stone-100 text-stone-800 hover:bg-stone-200 border border-stone-300 transition-all"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold liquid-glass liquid-glass-hover text-neutral-200 hover:text-white transition-all shadow-sm"
               >
-                <TrendingUp className="w-4 h-4 text-stone-600" />
+                <TrendingUp className="w-4 h-4 text-[#d4af37]" />
                 <span>Lihat Laba Rugi & Neraca</span>
               </Link>
             </div>
           </div>
+
+          {/* Antrean Pengajuan Menunggu (Wadah Tabel Apple iOS Liquid Glass) */}
+          <div className="p-6 sm:p-7 rounded-3xl liquid-glass-table space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-white">
+                  Pengajuan Memerlukan Tindakan ({financeData.antreanPersetujuan})
+                </h3>
+                <p className="text-xs text-neutral-400 mt-0.5">
+                  Daftar nota pengeluaran yang menunggu verifikasi atau persetujuan Anda
+                </p>
+              </div>
+              <Link
+                href="/pengajuan"
+                className="text-xs font-bold text-[#d4af37] hover:text-[#f0cb5a] inline-flex items-center gap-1"
+              >
+                <span>Kelola Semua</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {financeData.antreanPengajuan.length === 0 ? (
+              <div className="text-center py-8 text-neutral-400 text-xs flex flex-col items-center gap-2">
+                <CheckCircle className="w-8 h-8 text-emerald-400" />
+                <span>Tidak ada pengajuan yang sedang menunggu persetujuan Anda.</span>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="text-[11px] uppercase tracking-wider text-neutral-400 bg-white/[0.04] border-b border-white/[0.10]">
+                    <tr>
+                      <th className="py-3 px-3.5 font-semibold">Nomor</th>
+                      <th className="py-3 px-3.5 font-semibold">Tanggal</th>
+                      <th className="py-3 px-3.5 font-semibold">Pengaju</th>
+                      <th className="py-3 px-3.5 font-semibold">Keperluan</th>
+                      <th className="py-3 px-3.5 font-semibold text-right">Jumlah</th>
+                      <th className="py-3 px-3.5 font-semibold text-center">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/[0.08]">
+                    {financeData.antreanPengajuan.map((pg) => (
+                      <tr key={pg.id} className="hover:bg-white/[0.05] transition-colors">
+                        <td className="py-3 px-3.5 font-mono font-bold text-[#d4af37]">
+                          {pg.nomor || `#${pg.id}`}
+                        </td>
+                        <td className="py-3 px-3.5 text-neutral-300">{pg.tanggal_transaksi}</td>
+                        <td className="py-3 px-3.5 font-medium text-white">
+                          {pg.pengaju?.nama_lengkap || '-'}
+                        </td>
+                        <td className="py-3 px-3.5 text-neutral-300 max-w-xs truncate">
+                          {pg.keterangan}
+                        </td>
+                        <td className="py-3 px-3.5 font-bold text-white text-right">
+                          {formatRupiah(pg.jumlah)}
+                        </td>
+                        <td className="py-3 px-3.5 text-center">
+                          <Link
+                            href={`/pengajuan?id=${pg.id}`}
+                            className="px-3.5 py-1.5 rounded-xl text-[11px] font-bold bg-[#d4af37] text-neutral-950 hover:bg-[#e6c148] shadow-md transition-all active:scale-[0.98]"
+                          >
+                            Tinjau
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
-      ) : (
-        /* Metrik Khusus Staf */
+      )}
+
+      {/* DASHBOARD UNTUK STAF (Apple iOS Liquid Glass) */}
+      {!isFinance && stafData && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-stone-600">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
               Ringkasan Pengajuan Pengeluaran Saya
             </h2>
             <Link
               href="/pengajuan"
-              className="text-xs text-amber-800 font-semibold inline-flex items-center gap-1 hover:underline"
+              className="text-xs text-[#d4af37] font-bold inline-flex items-center gap-1 hover:underline"
             >
-              <span>Semua Pengajuan</span>
+              <span>Lihat Semua</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
+          {/* 4 Kartu Metrik Staf Apple iOS Liquid Glass */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-2 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-2">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold">Total Pengajuan</span>
-                <Receipt className="w-4 h-4 text-amber-800" />
+                <Receipt className="w-4 h-4 text-[#d4af37]" />
               </div>
-              <div className="text-2xl font-bold text-stone-900">8 Dokumen</div>
-              <p className="text-[11px] text-stone-400">Reimbursement & Nota</p>
+              <div className="text-2xl font-bold text-white">
+                {stafData.totalPengajuan} Dokumen
+              </div>
+              <p className="text-[11px] text-neutral-400">Total riwayat pengajuan Anda</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-2 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-2">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold">Menunggu Verifikasi</span>
-                <Clock className="w-4 h-4 text-orange-600" />
+                <Clock className="w-4 h-4 text-orange-400" />
               </div>
-              <div className="text-2xl font-bold text-orange-600">1 Dokumen</div>
-              <p className="text-[11px] text-stone-400">Sedang diperiksa Akuntan</p>
+              <div className="text-2xl font-bold text-orange-400">
+                {stafData.menungguVerifikasi} Dokumen
+              </div>
+              <p className="text-[11px] text-neutral-400">Sedang ditinjau Akuntan/Direktur</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-2 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-2">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold">Perlu Revisi</span>
-                <AlertTriangle className="w-4 h-4 text-rose-600" />
+                <AlertTriangle className="w-4 h-4 text-rose-400" />
               </div>
-              <div className="text-2xl font-bold text-rose-600">0 Dokumen</div>
-              <p className="text-[11px] text-stone-400">Semua nota terverifikasi</p>
+              <div className="text-2xl font-bold text-rose-400">
+                {stafData.perluRevisi} Dokumen
+              </div>
+              <p className="text-[11px] text-neutral-400">Memerlukan koreksi nota dari Anda</p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-white border border-stone-200/80 shadow-sm space-y-2 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between text-stone-500">
+            <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-2">
+              <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold">Selesai Dibayar</span>
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               </div>
-              <div className="text-2xl font-bold text-emerald-600">7 Dokumen</div>
-              <p className="text-[11px] text-stone-400">Dana sudah dicairkan</p>
+              <div className="text-2xl font-bold text-emerald-400">
+                {stafData.selesaiDibayar} Dokumen
+              </div>
+              <p className="text-[11px] text-neutral-400">Dana telah dicairkan</p>
             </div>
           </div>
 
-          <div className="p-6 rounded-2xl bg-white border border-stone-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          {/* Quick Create Card (Apple iOS Liquid Glass) */}
+          <div className="p-6 sm:p-7 rounded-3xl liquid-glass flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-stone-900 text-sm">
-                Perlu mengganti biaya operasional atau bahan batik?
+              <h3 className="font-bold text-white text-sm">
+                Perlu mengajukan biaya operasional atau bahan batik?
               </h3>
-              <p className="text-xs text-stone-500 mt-0.5">
-                Unggah foto nota dan ajukan reimbursement secara cepat dan terpantau.
+              <p className="text-xs text-neutral-400 mt-0.5">
+                Unggah foto nota pembelian malam, pewarna, atau kain mori untuk reimbursement cepat.
               </p>
             </div>
             <Link
               href="/pengajuan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-amber-900 text-white hover:bg-amber-800 shadow-sm transition-all shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all shrink-0 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Buat Pengajuan Baru</span>

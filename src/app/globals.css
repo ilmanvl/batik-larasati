@@ -24,3 +24,172 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Apple iOS Liquid Glass Material System — Balanced iOS Frosted Glass */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.10);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  backdrop-filter: blur(12px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.38) 0%,
+    rgba(255, 255, 255, 0.14) 26%,
+    rgba(255, 255, 255, 0.02) 60%,
+    rgba(255, 255, 255, 0.10) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.liquid-glass-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.liquid-glass-hover:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.26);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+}
+
+/* Header Sambutan: Sedikit lebih terang dengan edge reflection menonjol */
+.liquid-glass-header {
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  backdrop-filter: blur(12px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquid-glass-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.18) 28%,
+    rgba(255, 255, 255, 0.03) 65%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Tabel & Antrean: Permukaan tenang dan elegan */
+.liquid-glass-table {
+  background: rgba(255, 255, 255, 0.085);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  backdrop-filter: blur(12px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquid-glass-table::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.32) 0%,
+    rgba(255, 255, 255, 0.12) 25%,
+    rgba(255, 255, 255, 0.02) 60%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Sidebar: Sedikit lebih gelap transparan */
+.liquid-glass-sidebar {
+  background: rgba(255, 255, 255, 0.055);
+  -webkit-backdrop-filter: blur(12px) saturate(110%);
+  backdrop-filter: blur(12px) saturate(110%);
+  border-right: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
+  position: relative;
+}
+
+.liquid-glass-sidebar::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.30), transparent);
+  pointer-events: none;
+}
+
+/* Modal Dialog */
+.liquid-glass-modal {
+  background: rgba(255, 255, 255, 0.15);
+  -webkit-backdrop-filter: blur(16px) saturate(110%);
+  backdrop-filter: blur(16px) saturate(110%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.liquid-glass-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.50) 0%,
+    rgba(255, 255, 255, 0.20) 30%,
+    rgba(255, 255, 255, 0.04) 65%,
+    rgba(255, 255, 255, 0.15) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
