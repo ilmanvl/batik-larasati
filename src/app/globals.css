@@ -25,16 +25,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-/* Apple iOS Liquid Glass Material System — Balanced iOS Frosted Glass */
+/* Apple iOS Liquid Glass Material System — Minimalist Heritage Glass */
 .liquid-glass {
-  background: rgba(255, 255, 255, 0.10);
-  -webkit-backdrop-filter: blur(12px) saturate(110%);
-  backdrop-filter: blur(12px) saturate(110%);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  -webkit-backdrop-filter: blur(12px) saturate(108%);
+  backdrop-filter: blur(12px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.11);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    0 8px 32px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -48,10 +47,10 @@ body {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.38) 0%,
-    rgba(255, 255, 255, 0.14) 26%,
-    rgba(255, 255, 255, 0.02) 60%,
-    rgba(255, 255, 255, 0.10) 100%
+    rgba(255, 255, 255, 0.14) 0%,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.005) 60%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -65,22 +64,22 @@ body {
 }
 
 .liquid-glass-hover:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.30);
+    0 12px 36px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
-/* Header Sambutan: Sedikit lebih terang dengan edge reflection menonjol */
+/* Header Sambutan: Transparan susu netral dengan refleksi tepi halus */
 .liquid-glass-header {
-  background: rgba(255, 255, 255, 0.12);
-  -webkit-backdrop-filter: blur(12px) saturate(110%);
-  backdrop-filter: blur(12px) saturate(110%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+  -webkit-backdrop-filter: blur(12px) saturate(108%);
+  backdrop-filter: blur(12px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    0 8px 32px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -94,10 +93,10 @@ body {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.45) 0%,
-    rgba(255, 255, 255, 0.18) 28%,
-    rgba(255, 255, 255, 0.03) 65%,
-    rgba(255, 255, 255, 0.12) 100%
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.005) 60%,
+    rgba(255, 255, 255, 0.03) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -106,15 +105,15 @@ body {
   z-index: 2;
 }
 
-/* Tabel & Antrean: Permukaan tenang dan elegan */
+/* Tabel & Antrean: Permukaan tenang dan elegan untuk keterbacaan data */
 .liquid-glass-table {
-  background: rgba(255, 255, 255, 0.085);
-  -webkit-backdrop-filter: blur(12px) saturate(110%);
-  backdrop-filter: blur(12px) saturate(110%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.055);
+  -webkit-backdrop-filter: blur(12px) saturate(108%);
+  backdrop-filter: blur(12px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.20);
+    0 8px 30px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -128,10 +127,10 @@ body {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.32) 0%,
-    rgba(255, 255, 255, 0.12) 25%,
-    rgba(255, 255, 255, 0.02) 60%,
-    rgba(255, 255, 255, 0.08) 100%
+    rgba(255, 255, 255, 0.13) 0%,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.005) 60%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -140,13 +139,13 @@ body {
   z-index: 2;
 }
 
-/* Sidebar: Sedikit lebih gelap transparan */
+/* Sidebar: Kaca gelap transparan yang tenang, tidak bersaing dengan konten utama */
 .liquid-glass-sidebar {
-  background: rgba(255, 255, 255, 0.055);
-  -webkit-backdrop-filter: blur(12px) saturate(110%);
-  backdrop-filter: blur(12px) saturate(110%);
-  border-right: 1px solid rgba(255, 255, 255, 0.13);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.32);
+  background: rgba(255, 255, 255, 0.045);
+  -webkit-backdrop-filter: blur(10px) saturate(108%);
+  backdrop-filter: blur(10px) saturate(108%);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   position: relative;
 }
 
@@ -156,19 +155,19 @@ body {
   inset-inline: 0;
   top: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.30), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.18), transparent);
   pointer-events: none;
 }
 
 /* Modal Dialog */
 .liquid-glass-modal {
-  background: rgba(255, 255, 255, 0.15);
-  -webkit-backdrop-filter: blur(16px) saturate(110%);
-  backdrop-filter: blur(16px) saturate(110%);
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(14px) saturate(108%);
+  backdrop-filter: blur(14px) saturate(108%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+    0 20px 50px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.20);
   position: relative;
   overflow: hidden;
   isolation: isolate;
@@ -182,10 +181,10 @@ body {
   padding: 1px;
   background: linear-gradient(
     145deg,
-    rgba(255, 255, 255, 0.50) 0%,
-    rgba(255, 255, 255, 0.20) 30%,
-    rgba(255, 255, 255, 0.04) 65%,
-    rgba(255, 255, 255, 0.15) 100%
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.10) 25%,
+    rgba(255, 255, 255, 0.02) 65%,
+    rgba(255, 255, 255, 0.06) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;

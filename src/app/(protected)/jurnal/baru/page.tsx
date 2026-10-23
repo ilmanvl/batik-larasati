@@ -36,14 +36,14 @@ export default async function BuatJurnalBaruPage() {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 1. Header Banner Liquid Glass */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-7 rounded-3xl liquid-glass-header text-white">
+      {/* 1. Header Banner Liquid Glass Halus */}
+      <div className="p-6 sm:p-7 rounded-3xl liquid-glass-header text-white">
         <div className="relative z-10">
           <Link
             href="/jurnal"
-            className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-400 hover:text-white transition-colors mb-2"
+            className="inline-flex items-center gap-2 text-xs font-semibold text-neutral-400 hover:text-white transition-colors mb-2.5"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 text-[#d4af37]" />
             <span>Kembali ke Daftar Jurnal</span>
           </Link>
           <div className="flex items-center gap-2 mb-1">
@@ -62,18 +62,18 @@ export default async function BuatJurnalBaruPage() {
         </div>
       </div>
 
-      {/* 2. Banner Informasi Prinsip Akuntansi */}
-      <div className="p-4 rounded-2xl liquid-glass text-xs text-neutral-300 flex items-start gap-3 border border-amber-500/20 bg-amber-500/[0.04]">
+      {/* 2. Banner Informasi Prinsip Akuntansi (Solid Dark Netral) */}
+      <div className="p-4 rounded-2xl bg-[#141414] border border-[#2e2e2e] text-xs text-neutral-300 flex items-start gap-3 shadow-sm">
         <ShieldCheck className="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5" />
-        <div className="space-y-1">
+        <div className="space-y-0.5">
           <span className="font-semibold text-white">Standar Validasi Pembukuan:</span>
-          <p className="text-neutral-400 leading-relaxed">
+          <p className="text-[#a3a3a3] leading-relaxed">
             Transaksi harus memiliki minimal 2 baris akun. Pada tiap baris hanya boleh diisi salah satu (Debit atau Kredit). Total nilai Debit wajib sama persis dengan total Kredit. Tanggal transaksi harus berada pada periode akuntansi yang berstatus terbuka.
           </p>
         </div>
       </div>
 
-      {/* 3. Wadah Formulir Interaktif */}
+      {/* 3. Wadah Formulir Interaktif (Satu Workspace Akuntansi Terpadu) */}
       <FormJurnalManual akunList={akunList || []} />
     </div>
   );

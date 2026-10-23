@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { logoutAction } from '@/app/actions/auth';
 import type { PeranType } from '@/types/database';
+import LogoBatik from './LogoBatik';
 import {
   LayoutDashboard,
   Receipt,
@@ -85,10 +86,8 @@ export function Sidebar({ user }: SidebarProps) {
       {/* Mobile Top Bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0a0a0a]/80 backdrop-blur-md border-b border-white/[0.12] px-4 flex items-center justify-between z-40">
         <div className="flex items-center gap-2.5 font-bold text-white">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d4af37] to-[#aa8022] text-neutral-950 flex items-center justify-center text-xs font-black shadow-sm">
-            BL
-          </div>
-          <span className="text-sm tracking-tight text-[#d4af37]">CV Batik Larasati</span>
+          <LogoBatik className="w-8 h-8 text-[#d4af37] shrink-0" />
+          <span className="text-sm tracking-tight text-white font-bold">CV Batik Larasati</span>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -114,15 +113,13 @@ export function Sidebar({ user }: SidebarProps) {
       >
         {/* Brand Header */}
         <div className="p-5 border-b border-white/[0.10] flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#d4af37] via-[#c59e31] to-[#996f1b] text-neutral-950 flex items-center justify-center font-black text-base shadow-lg shadow-[#d4af37]/10">
-            BL
-          </div>
+          <LogoBatik className="w-10 h-10 text-[#d4af37] shrink-0" />
           <div>
             <h1 className="font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
               <span>Batik Larasati</span>
               <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
             </h1>
-            <p className="text-[11px] text-[#d4af37]/80 font-medium tracking-wide">
+            <p className="text-[11px] text-neutral-400 font-normal tracking-wide">
               Finance & Accounting
             </p>
           </div>
@@ -131,13 +128,23 @@ export function Sidebar({ user }: SidebarProps) {
         {/* User Profile Card */}
         <div className="p-3.5 mx-3.5 my-3.5 rounded-2xl liquid-glass">
           <div className="flex items-center gap-3 mb-2.5">
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8f6d19] text-neutral-950 font-bold text-xs flex items-center justify-center shadow-inner">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d4af37] to-[#8f6d19] text-neutral-950 font-bold text-xs flex items-center justify-center shadow-inner shrink-0">
               {user.nama_lengkap.slice(0, 2).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-white truncate">{user.nama_lengkap}</p>
               <p className="text-[11px] text-neutral-400 truncate">{user.jabatan || user.email}</p>
             </div>
+            {/* Tombol Logout Frosted Glass */}
+            <form action={logoutAction} className="shrink-0">
+              <button
+                type="submit"
+                title="Keluar dari Aplikasi"
+                className="p-1.5 rounded-xl bg-white/[0.04] hover:bg-rose-500/15 border border-white/[0.08] hover:border-rose-500/30 text-neutral-400 hover:text-rose-300 transition-all cursor-pointer shadow-sm active:scale-90"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </form>
           </div>
           <div className="flex items-center justify-between pt-2 border-t border-white/[0.08]">
             <span
@@ -147,8 +154,8 @@ export function Sidebar({ user }: SidebarProps) {
             >
               {user.peran}
             </span>
-            <div className="flex items-center gap-1 text-[10px] text-[#d4af37]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#d4af37] animate-pulse" />
+            <div className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>Sesi Aktif</span>
             </div>
           </div>
@@ -158,7 +165,7 @@ export function Sidebar({ user }: SidebarProps) {
         <nav className="flex-1 overflow-y-auto px-3 py-2 space-y-5">
           {navItems.map((group, idx) => (
             <div key={idx} className="space-y-1">
-              <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-[#d4af37]/60">
+              <div className="px-3 text-[10px] font-bold uppercase tracking-wider text-neutral-400">
                 {group.title}
               </div>
               {group.items.map((item) => {
@@ -175,7 +182,7 @@ export function Sidebar({ user }: SidebarProps) {
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
                       isActive
                         ? 'bg-[#d4af37]/15 text-[#d4af37] border border-[#d4af37]/35 shadow-sm font-semibold backdrop-blur-sm'
-                        : 'text-neutral-300 hover:bg-white/[0.07] hover:text-[#d4af37]'
+                        : 'text-neutral-300 hover:bg-white/[0.06] hover:text-white'
                     }`}
                   >
                     <Icon
@@ -190,19 +197,6 @@ export function Sidebar({ user }: SidebarProps) {
             </div>
           ))}
         </nav>
-
-        {/* Logout Button */}
-        <div className="p-3 border-t border-white/[0.10]">
-          <form action={logoutAction}>
-            <button
-              type="submit"
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium text-rose-300/80 hover:bg-rose-500/10 hover:text-rose-200 transition-colors cursor-pointer"
-            >
-              <LogOut className="w-4 h-4 shrink-0 text-rose-400" />
-              <span>Keluar dari Aplikasi</span>
-            </button>
-          </form>
-        </div>
       </aside>
     </>
   );

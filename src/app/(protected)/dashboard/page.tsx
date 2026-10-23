@@ -65,7 +65,7 @@ export default async function DashboardPage() {
             <span className="text-xs text-neutral-400">{today}</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-            Selamat datang, <span className="text-[#d4af37]">{profile?.nama_lengkap}</span>!
+            Selamat datang, <span className="text-white">{profile?.nama_lengkap}</span>!
           </h1>
           <p className="text-xs sm:text-sm text-neutral-300 mt-1 max-w-2xl leading-relaxed">
             {isFinance
@@ -87,7 +87,7 @@ export default async function DashboardPage() {
             <h2 className="text-xs font-bold uppercase tracking-wider text-neutral-300">
               Ikhtisar Keuangan Berjalan
             </h2>
-            <span className="text-xs font-semibold text-[#d4af37]">
+            <span className="text-xs font-medium text-neutral-300 bg-white/[0.06] px-2.5 py-1 rounded-lg border border-white/[0.10]">
               Periode: {financeData.periodeAktif.nama}
             </span>
           </div>
@@ -100,7 +100,7 @@ export default async function DashboardPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Total Kas & Bank
                 </span>
-                <div className="p-2.5 rounded-2xl bg-[#d4af37]/15 text-[#d4af37] border border-[#d4af37]/30">
+                <div className="p-2.5 rounded-2xl bg-white/[0.08] text-white border border-white/[0.12]">
                   <Wallet className="w-4 h-4" />
                 </div>
               </div>
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
               </p>
             </div>
 
-            {/* 4. Laba Bersih Bulan Ini */}
+            {/* 4. Laba Bersih Bulan Ini (Highlight Emas Pertahankan) */}
             <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-3">
               <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold uppercase tracking-wider">
@@ -193,7 +193,7 @@ export default async function DashboardPage() {
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Status Pembukuan
                 </span>
-                <div className="p-2.5 rounded-2xl bg-white/[0.08] text-[#d4af37] border border-white/[0.12]">
+                <div className="p-2.5 rounded-2xl bg-white/[0.08] text-white border border-white/[0.12]">
                   <Calendar className="w-4 h-4" />
                 </div>
               </div>
@@ -227,7 +227,7 @@ export default async function DashboardPage() {
                   href="/jurnal"
                   className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold liquid-glass liquid-glass-hover text-neutral-200 hover:text-white transition-all shadow-sm"
                 >
-                  <FileSpreadsheet className="w-4 h-4 text-[#d4af37]" />
+                  <FileSpreadsheet className="w-4 h-4 text-neutral-300" />
                   <span>Catat Jurnal Umum</span>
                 </Link>
               )}
@@ -235,7 +235,7 @@ export default async function DashboardPage() {
                 href="/laporan"
                 className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold liquid-glass liquid-glass-hover text-neutral-200 hover:text-white transition-all shadow-sm"
               >
-                <TrendingUp className="w-4 h-4 text-[#d4af37]" />
+                <TrendingUp className="w-4 h-4 text-neutral-300" />
                 <span>Lihat Laba Rugi & Neraca</span>
               </Link>
             </div>
@@ -254,7 +254,7 @@ export default async function DashboardPage() {
               </div>
               <Link
                 href="/pengajuan"
-                className="text-xs font-bold text-[#d4af37] hover:text-[#f0cb5a] inline-flex items-center gap-1"
+                className="text-xs font-medium text-neutral-300 hover:text-white inline-flex items-center gap-1 transition-colors"
               >
                 <span>Kelola Semua</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -322,7 +322,7 @@ export default async function DashboardPage() {
             </h2>
             <Link
               href="/pengajuan"
-              className="text-xs text-[#d4af37] font-bold inline-flex items-center gap-1 hover:underline"
+              className="text-xs text-neutral-300 font-medium inline-flex items-center gap-1 hover:text-white transition-colors"
             >
               <span>Lihat Semua</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -334,7 +334,7 @@ export default async function DashboardPage() {
             <div className="p-6 rounded-3xl liquid-glass liquid-glass-hover space-y-2">
               <div className="flex items-center justify-between text-neutral-400">
                 <span className="text-xs font-semibold">Total Pengajuan</span>
-                <Receipt className="w-4 h-4 text-[#d4af37]" />
+                <Receipt className="w-4 h-4 text-white" />
               </div>
               <div className="text-2xl font-bold text-white">
                 {stafData.totalPengajuan} Dokumen

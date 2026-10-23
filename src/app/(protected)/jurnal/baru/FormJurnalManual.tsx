@@ -149,215 +149,222 @@ export function FormJurnalManual({ akunList }: { akunList: AkunOption[] }) {
         </div>
       )}
 
-      {/* 1. Header Informasi Transaksi */}
-      <div className="p-6 rounded-3xl liquid-glass space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <FileText className="w-4 h-4 text-[#d4af37]" />
-          Informasi Utama Jurnal
-        </h2>
+      {/* WORKSPACE UTAMA: Solid Dark Surface #141414 dengan border #2e2e2e (Tanpa blur, tanpa glass berlebihan) */}
+      <div className="bg-[#141414] border border-[#2e2e2e] rounded-3xl p-6 sm:p-8 space-y-8 shadow-xl">
+        {/* SECTION 1: Informasi Transaksi */}
+        <div className="space-y-4">
+          <div className="border-b border-[#262626] pb-3">
+            <h2 className="text-sm sm:text-base font-bold text-[#f5f5f5] flex items-center gap-2">
+              <FileText className="w-4 h-4 text-[#d4af37]" />
+              <span>Informasi Transaksi</span>
+            </h2>
+            <p className="text-xs text-[#a3a3a3] mt-0.5">
+              Tentukan tanggal pembukuan dan catatan deskriptif untuk transaksi ini.
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-              Tanggal Transaksi <span className="text-rose-400">*</span>
-            </label>
-            <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div>
+              <label className="block text-xs font-semibold text-[#a3a3a3] mb-1.5">
+                Tanggal Transaksi <span className="text-rose-400">*</span>
+              </label>
               <input
                 type="date"
                 required
                 value={tanggal}
                 onChange={(e) => setTanggal(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.12] text-white text-xs sm:text-sm focus:outline-none focus:border-[#d4af37] transition-all"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a1a1a] border border-[#333333] text-[#f5f5f5] text-xs sm:text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-colors"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-xs font-semibold text-[#a3a3a3] mb-1.5">
+                Keterangan / Deskripsi Transaksi <span className="text-rose-400">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                minLength={5}
+                placeholder="Contoh: Pembayaran sewa stan pameran batik di Solo Paragon..."
+                value={keterangan}
+                onChange={(e) => setKeterangan(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#1a1a1a] border border-[#333333] text-[#f5f5f5] text-xs sm:text-sm focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 placeholder:text-neutral-500 transition-colors"
               />
             </div>
           </div>
-
-          <div className="md:col-span-2">
-            <label className="block text-xs font-semibold text-neutral-300 mb-1.5">
-              Keterangan / Deskripsi Transaksi <span className="text-rose-400">*</span>
-            </label>
-            <input
-              type="text"
-              required
-              minLength={5}
-              placeholder="Contoh: Pembayaran sewa stan pameran batik di Solo Paragon..."
-              value={keterangan}
-              onChange={(e) => setKeterangan(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.12] text-white text-xs sm:text-sm focus:outline-none focus:border-[#d4af37] placeholder:text-neutral-500 transition-all"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Baris Akun Double-Entry */}
-      <div className="p-6 rounded-3xl liquid-glass-table space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
-          <div>
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Scale className="w-4 h-4 text-[#d4af37]" />
-              Rincian Posisi Debit & Kredit
-            </h2>
-            <p className="text-xs text-neutral-400 mt-0.5">
-              Tentukan akun dan masukkan nominal pada salah satu sisi (Debit atau Kredit).
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleTambahBaris}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white/[0.08] hover:bg-white/[0.15] text-white border border-white/[0.12] transition-all self-start sm:self-auto"
-          >
-            <Plus className="w-3.5 h-3.5 text-[#d4af37]" />
-            <span>Tambah Baris Akun</span>
-          </button>
         </div>
 
-        {/* Tabel Entri Baris */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs sm:text-sm border-collapse">
-            <thead>
-              <tr className="text-neutral-400 text-[11px] uppercase tracking-wider border-b border-white/[0.06]">
-                <th className="py-2 px-2 w-10 text-center">#</th>
-                <th className="py-2 px-3 min-w-[260px]">Bagan Akun (COA)</th>
-                <th className="py-2 px-3 min-w-[180px] text-right">Debit (Rp)</th>
-                <th className="py-2 px-3 min-w-[180px] text-right">Kredit (Rp)</th>
-                <th className="py-2 px-2 w-12 text-center">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/[0.04]">
-              {barisList.map((row, idx) => (
-                <tr key={row.id} className="group">
-                  <td className="py-3 px-2 text-center font-mono text-neutral-500 text-xs">
-                    {idx + 1}
-                  </td>
-                  <td className="py-3 px-3">
-                    <select
-                      required
-                      value={row.akun_id}
-                      onChange={(e) => handleChangeAkun(row.id, Number(e.target.value))}
-                      className="w-full px-3 py-2 rounded-xl bg-white/[0.05] border border-white/[0.12] text-white text-xs focus:outline-none focus:border-[#d4af37] transition-all"
-                    >
-                      <option value="" disabled className="bg-neutral-900 text-neutral-400">
-                        -- Pilih Akun COA --
-                      </option>
-                      {akunList.map((a) => (
-                        <option key={a.id} value={a.id} className="bg-neutral-900 text-white">
-                          {a.kode} - {a.nama} ({a.tipe.toUpperCase()})
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="py-3 px-3 text-right">
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={row.debit ? row.debit.toLocaleString('id-ID') : ''}
-                      onChange={(e) => handleChangeDebit(row.id, e.target.value)}
-                      className="w-full text-right px-3 py-2 rounded-xl bg-white/[0.05] border border-white/[0.12] text-emerald-400 font-mono text-xs focus:outline-none focus:border-emerald-500 transition-all placeholder:text-neutral-600"
-                    />
-                  </td>
-                  <td className="py-3 px-3 text-right">
-                    <input
-                      type="text"
-                      placeholder="0"
-                      value={row.kredit ? row.kredit.toLocaleString('id-ID') : ''}
-                      onChange={(e) => handleChangeKredit(row.id, e.target.value)}
-                      className="w-full text-right px-3 py-2 rounded-xl bg-white/[0.05] border border-white/[0.12] text-cyan-400 font-mono text-xs focus:outline-none focus:border-cyan-500 transition-all placeholder:text-neutral-600"
-                    />
-                  </td>
-                  <td className="py-3 px-2 text-center">
-                    <button
-                      type="button"
-                      disabled={barisList.length <= 2}
-                      onClick={() => handleHapusBaris(row.id)}
-                      className="p-1.5 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-30 disabled:hover:text-neutral-500 disabled:hover:bg-transparent"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      {/* 3. Live Balance Checker Widget */}
-      <div
-        className={`p-5 rounded-3xl liquid-glass border transition-all ${
-          isBalanced
-            ? 'border-emerald-500/40 bg-emerald-500/[0.04]'
-            : 'border-amber-500/30 bg-amber-500/[0.04]'
-        }`}
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div
-              className={`p-2.5 rounded-2xl border ${
-                isBalanced
-                  ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
-                  : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
-              }`}
-            >
-              {isBalanced ? (
-                <CheckCircle2 className="w-5 h-5" />
-              ) : (
-                <AlertCircle className="w-5 h-5" />
-              )}
-            </div>
+        {/* SECTION 2: Rincian Debit & Kredit */}
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#262626] pb-3">
             <div>
-              <div className="text-sm font-bold text-white flex items-center gap-2">
-                <span>{isBalanced ? 'Status Jurnal: Seimbang (Balance)' : 'Status Jurnal: Belum Seimbang'}</span>
-              </div>
-              <p className="text-xs text-neutral-400 mt-0.5">
-                {isBalanced
-                  ? 'Total Debit dan Kredit bernilai sama. Draf siap untuk disimpan.'
-                  : `Terdapat selisih pembukuan sebesar ${formatRupiah(selisih)}.`}
+              <h2 className="text-sm sm:text-base font-bold text-[#f5f5f5] flex items-center gap-2">
+                <Scale className="w-4 h-4 text-[#d4af37]" />
+                <span>Rincian Debit & Kredit</span>
+              </h2>
+              <p className="text-xs text-[#a3a3a3] mt-0.5">
+                Tentukan akun COA dan masukkan nominal pada salah satu sisi (Debit atau Kredit).
               </p>
             </div>
+
+            <button
+              type="button"
+              onClick={handleTambahBaris}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#1f1f1f] hover:bg-[#282828] text-[#f5f5f5] border border-[#383838] hover:border-[#444444] transition-all self-start sm:self-auto active:scale-95 shadow-sm"
+            >
+              <Plus className="w-3.5 h-3.5 text-[#d4af37]" />
+              <span>Tambah Baris Akun</span>
+            </button>
           </div>
 
-          {/* Nominal Perbandingan */}
-          <div className="flex items-center gap-6 self-end sm:self-auto text-xs font-mono">
-            <div>
-              <span className="text-neutral-400 block text-[10px] uppercase">Total Debit</span>
-              <span className="text-sm font-bold text-emerald-400">{formatRupiah(totalDebit)}</span>
+          {/* Tabel Entri Baris */}
+          <div className="overflow-x-auto rounded-xl border border-[#2a2a2a] bg-[#181818]">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse">
+              <thead>
+                <tr className="bg-[#1e1e1e] text-[#a3a3a3] text-[11px] uppercase tracking-wider border-b border-[#2e2e2e]">
+                  <th className="py-3 px-3 w-10 text-center font-semibold">#</th>
+                  <th className="py-3 px-4 min-w-[260px] font-semibold">Bagan Akun (COA)</th>
+                  <th className="py-3 px-4 min-w-[180px] text-right font-semibold">Debit (Rp)</th>
+                  <th className="py-3 px-4 min-w-[180px] text-right font-semibold">Kredit (Rp)</th>
+                  <th className="py-3 px-3 w-12 text-center font-semibold">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#262626]">
+                {barisList.map((row, idx) => (
+                  <tr key={row.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="py-3.5 px-3 text-center font-mono text-[#737373] text-xs">
+                      {idx + 1}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <select
+                        required
+                        value={row.akun_id}
+                        onChange={(e) => handleChangeAkun(row.id, Number(e.target.value))}
+                        className="w-full px-3 py-2 rounded-lg bg-[#141414] border border-[#333333] text-[#f5f5f5] text-xs focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/30 transition-colors"
+                      >
+                        <option value="" disabled className="bg-neutral-900 text-neutral-400">
+                          -- Pilih Akun COA --
+                        </option>
+                        {akunList.map((a) => (
+                          <option key={a.id} value={a.id} className="bg-neutral-900 text-white">
+                            {a.kode} - {a.nama} ({a.tipe.toUpperCase()})
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        value={row.debit ? row.debit.toLocaleString('id-ID') : ''}
+                        onChange={(e) => handleChangeDebit(row.id, e.target.value)}
+                        className="w-full text-right px-3 py-2 rounded-lg bg-[#141414] border border-[#333333] text-emerald-400 font-mono text-xs focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-colors placeholder:text-neutral-600"
+                      />
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <input
+                        type="text"
+                        placeholder="0"
+                        value={row.kredit ? row.kredit.toLocaleString('id-ID') : ''}
+                        onChange={(e) => handleChangeKredit(row.id, e.target.value)}
+                        className="w-full text-right px-3 py-2 rounded-lg bg-[#141414] border border-[#333333] text-cyan-400 font-mono text-xs focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-colors placeholder:text-neutral-600"
+                      />
+                    </td>
+                    <td className="py-3.5 px-3 text-center">
+                      <button
+                        type="button"
+                        disabled={barisList.length <= 2}
+                        onClick={() => handleHapusBaris(row.id)}
+                        className="p-1.5 rounded-lg text-neutral-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-20 disabled:hover:text-neutral-500 disabled:hover:bg-transparent"
+                        title={barisList.length <= 2 ? 'Minimal 2 baris transaksi' : 'Hapus baris'}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* SECTION 3: Status Keseimbangan Jurnal (Summary Bar Ringkas) */}
+        <div
+          className={`p-4 sm:p-5 rounded-2xl border transition-colors ${
+            isBalanced
+              ? 'bg-[#181818] border-emerald-500/40'
+              : 'bg-[#181818] border-amber-500/30'
+          }`}
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={`p-2 rounded-xl border ${
+                  isBalanced
+                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                    : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                }`}
+              >
+                {isBalanced ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+              </div>
+              <div>
+                <div className="text-xs sm:text-sm font-bold text-[#f5f5f5] flex items-center gap-2">
+                  <span>{isBalanced ? 'Status Jurnal: Seimbang (Balance)' : 'Status Jurnal: Belum Seimbang'}</span>
+                </div>
+                <p className="text-[11px] sm:text-xs text-[#a3a3a3] mt-0.5">
+                  {isBalanced
+                    ? 'Total Debit dan Kredit bernilai sama. Draf siap disimpan.'
+                    : `Terdapat selisih pembukuan sebesar ${formatRupiah(selisih)}.`}
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-neutral-400 block text-[10px] uppercase">Total Kredit</span>
-              <span className="text-sm font-bold text-cyan-400">{formatRupiah(totalKredit)}</span>
+
+            {/* Nominal Perbandingan */}
+            <div className="flex items-center gap-6 self-end sm:self-auto text-xs font-mono">
+              <div>
+                <span className="text-[#a3a3a3] block text-[10px] uppercase font-sans">Total Debit</span>
+                <span className="text-sm font-bold text-emerald-400">{formatRupiah(totalDebit)}</span>
+              </div>
+              <div>
+                <span className="text-[#a3a3a3] block text-[10px] uppercase font-sans">Total Kredit</span>
+                <span className="text-sm font-bold text-cyan-400">{formatRupiah(totalKredit)}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* 4. Tombol Aksi Simpan */}
-      <div className="flex items-center justify-end gap-3 pt-2">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="px-5 py-2.5 rounded-2xl text-xs font-semibold text-neutral-400 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.10] transition-all"
-        >
-          Batal
-        </button>
+        {/* SECTION 4: Tombol Aksi */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#262626]">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="px-5 py-2.5 rounded-xl text-xs font-semibold text-[#a3a3a3] hover:text-[#f5f5f5] bg-[#1a1a1a] hover:bg-[#242424] border border-[#333333] transition-colors"
+          >
+            Batal
+          </button>
 
-        <button
-          type="submit"
-          disabled={!canSubmit}
-          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98]"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Menyimpan Draf Jurnal...</span>
-            </>
-          ) : (
-            <>
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Simpan Sebagai Draf Jurnal</span>
-            </>
-          )}
-        </button>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-[#d4af37] hover:bg-[#c59e31] text-neutral-950 transition-colors disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] shadow-md shadow-[#d4af37]/15"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Menyimpan Draf Jurnal...</span>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Simpan Sebagai Draf Jurnal</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );
