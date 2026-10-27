@@ -93,6 +93,17 @@ export function MasukForm() {
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
+
+          {/* Fitur Lupa Kata Sandi (Mockup) */}
+          <div className="flex justify-end mt-1.5">
+            <button
+              type="button"
+              onClick={() => alert('Fitur Lupa Kata Sandi akan dihubungkan ke email reset Supabase pada fase pengembangan berikutnya.')}
+              className="text-xs text-neutral-400 hover:text-[#d4af37] transition-colors cursor-pointer"
+            >
+              Lupa Kata Sandi?
+            </button>
+          </div>
         </div>
 
         <button
@@ -116,4 +127,3 @@ export function MasukForm() {
     </div>
   );
 }
-
