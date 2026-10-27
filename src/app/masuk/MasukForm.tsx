@@ -17,8 +17,10 @@ export function MasukForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [localAlert, setLocalAlert] = useState<string | null>(null);
 
   const errorMessage =
+    localAlert ||
     state.error ||
     (urlError === 'inactive'
       ? 'Akun Anda dinonaktifkan. Hubungi Direktur untuk mengaktifkan kembali.'
@@ -54,7 +56,10 @@ export function MasukForm() {
               autoComplete="email"
               required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setLocalAlert(null); // Menghilangkan pesan saat mengetik
+              }}
               placeholder="nama@email.com"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#333333] bg-[#1a1a1a] text-[#f5f5f5] text-xs sm:text-sm placeholder:text-neutral-500 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/40 transition-colors shadow-inner"
             />
@@ -79,7 +84,10 @@ export function MasukForm() {
               autoComplete="current-password"
               required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setLocalAlert(null); // Menghilangkan pesan saat mengetik
+              }}
               placeholder="••••••••••••"
               className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#333333] bg-[#1a1a1a] text-[#f5f5f5] text-xs sm:text-sm placeholder:text-neutral-500 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37]/40 transition-colors shadow-inner"
             />
@@ -98,7 +106,7 @@ export function MasukForm() {
           <div className="flex justify-end mt-1.5">
             <button
               type="button"
-              onClick={() => alert('Silakan hubungi Administrator (Direktur) untuk mengatur ulang kata sandi Anda.')}
+              onClick={() => setLocalAlert('Silakan hubungi Administrator (Direktur) untuk mengatur ulang kata sandi Anda.')}
               className="text-xs text-neutral-400 hover:text-[#d4af37] transition-colors cursor-pointer"
             >
               Lupa Kata Sandi?
