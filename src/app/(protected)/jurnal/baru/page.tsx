@@ -5,7 +5,14 @@ import type { PeranType } from '@/types/database';
 import { FormJurnalManual } from './FormJurnalManual';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 
-export default async function BuatJurnalBaruPage() {
+import { supabaseAdmin } from '@/lib/supabase/admin';
+
+export default async function BuatJurnalBaruPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ mutasi_id?: string }>;
+}) {
+  const { mutasi_id } = (await searchParams) || {};
   const supabase = await createClient();
 
   const {
@@ -25,6 +32,27 @@ export default async function BuatJurnalBaruPage() {
   // Hanya Akuntan dan Direktur yang boleh mencatat jurnal manual
   if (!['akuntan', 'direktur'].includes(role)) {
     redirect('/jurnal');
+  }
+
+  // Ambil data mutasi_bank jika ada parameter mutasi_id
+  let initialMutasi: {
+    id: number;
+    akun_bank_id: number;
+    tanggal: string;
+    deskripsi: string;
+    jumlah: number;
+    saldo: number | null;
+  } | null = null;
+
+  if (mutasi_id && !isNaN(Number(mutasi_id))) {
+    const { data: mData } = await supabaseAdmin
+      .from('mutasi_bank')
+      .select('id, akun_bank_id, tanggal, deskripsi, jumlah, saldo')
+      .eq('id', Number(mutasi_id))
+      .single();
+    if (mData) {
+      initialMutasi = mData;
+    }
   }
 
   // Ambil daftar Bagan Akun (COA) aktif yang diurutkan berdasarkan kode
@@ -74,7 +102,7 @@ export default async function BuatJurnalBaruPage() {
       </div>
 
       {/* 3. Wadah Formulir Interaktif (Satu Workspace Akuntansi Terpadu) */}
-      <FormJurnalManual akunList={akunList || []} />
+      <FormJurnalManual akunList={akunList || []} initialMutasi={initialMutasi} />
     </div>
   );
 }

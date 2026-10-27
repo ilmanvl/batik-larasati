@@ -238,7 +238,7 @@ export default async function JurnalPage({
           <div className="self-start sm:self-auto relative z-10">
             <Link
               href="/jurnal/baru"
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Buat Jurnal Manual</span>
@@ -329,7 +329,7 @@ export default async function JurnalPage({
               </div>
               <button
                 type="submit"
-                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 shadow-md shadow-[#d4af37]/20 border border-[#f5d77f]/40 shrink-0"
+                className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95 shrink-0"
               >
                 Cari
               </button>

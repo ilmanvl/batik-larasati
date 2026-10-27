@@ -175,10 +175,31 @@ export function ActionApprovalPanel({
   };
 
   // Evaluasi apakah user memiliki aksi pada pengajuan ini
-  const canAkuntanVerify = currentRole === 'akuntan' && pengajuan.status === 'diajukan';
-  const canDirekturApprove = currentRole === 'direktur' && pengajuan.status === 'menunggu_direktur';
-  const canAkuntanPay = currentRole === 'akuntan' && pengajuan.status === 'disetujui';
+  // Aturan BR-09: Pembuat pengajuan TIDAK BOLEH memverifikasi, menyetujui, menolak, atau merevisi dokumennya sendiri
+  const canAkuntanVerify = !isOwner && currentRole === 'akuntan' && pengajuan.status === 'diajukan';
+  const canDirekturApprove = !isOwner && currentRole === 'direktur' && pengajuan.status === 'menunggu_direktur';
+  const canAkuntanPay = !isOwner && currentRole === 'akuntan' && pengajuan.status === 'disetujui';
   const canOwnerAct = isOwner && ['draf', 'perlu_revisi'].includes(pengajuan.status);
+
+  // Jika user adalah pembuat pengajuan dan statusnya sedang dievaluasi, tampilkan pesan peringatan segregasi BR-09
+  if (isOwner && ['diajukan', 'menunggu_direktur'].includes(pengajuan.status)) {
+    const pihakPemeriksa = pengajuan.status === 'menunggu_direktur' ? 'Direktur' : 'Akuntan / Direktur';
+    return (
+      <div className="p-5 rounded-3xl liquid-glass border-[#d4af37]/30 flex items-start gap-3.5 relative overflow-hidden">
+        <div className="w-9 h-9 rounded-2xl bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center shrink-0 mt-0.5">
+          <ShieldAlert className="w-5 h-5 text-[#d4af37]" />
+        </div>
+        <div className="space-y-1">
+          <h3 className="text-xs font-bold text-white tracking-wide">
+            Dokumen Sedang Dievaluasi
+          </h3>
+          <p className="text-xs text-neutral-300 leading-relaxed">
+            Dokumen pengajuan Anda saat ini sedang dievaluasi oleh <strong className="text-white">{pihakPemeriksa}</strong>. Sesuai aturan segregasi wewenang, pemohon tidak diperkenankan memverifikasi atau menyetujui pengajuannya sendiri.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!canAkuntanVerify && !canDirekturApprove && !canAkuntanPay && !canOwnerAct) {
     return null;
@@ -395,7 +416,7 @@ export function ActionApprovalPanel({
                   type="button"
                   disabled={loading}
                   onClick={handleAjukanOwner}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98]"
                 >
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                   <span>Ajukan Dokumen Sekarang</span>
@@ -439,7 +460,7 @@ export function ActionApprovalPanel({
                 type="button"
                 onClick={handleVerifikasiAkuntan}
                 disabled={loading}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -460,7 +481,7 @@ export function ActionApprovalPanel({
                 type="button"
                 onClick={handleSetujuiDirektur}
                 disabled={loading}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-50"
               >
                 {loading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

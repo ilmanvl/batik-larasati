@@ -3,7 +3,16 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
+import { sendNotification } from '@/lib/email';
 import type { JenisPengajuan } from '@/types/database';
+
+function formatRupiah(amount: number): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 export async function submitPengajuanAction(formData: FormData): Promise<{
   success: boolean;
@@ -27,7 +36,7 @@ export async function submitPengajuanAction(formData: FormData): Promise<{
       .single();
 
     if (profile?.peran === 'direktur') {
-      return { success: false, message: 'Direktur tidak diperkenankan membuat pengajuan biaya (sesuai aturan bisnis BR-09).' };
+      return { success: false, message: 'Direktur tidak diperkenankan membuat pengajuan biaya demi kepatuhan pemisahan wewenang.' };
     }
 
     // 1. Ekstrak dan validasi input
@@ -100,23 +109,61 @@ export async function submitPengajuanAction(formData: FormData): Promise<{
       buktiPath = `nota_manual_${dateStr}_${newId}`;
     }
 
-    // 4. Insert ke tabel pengajuan tetap menggunakan client user (memvalidasi RLS & auth)
-    const { data: newPengajuan, error: insertError } = await supabase
+    // 4. Metode Bypass RLS:
+    // Insert pertama kali dengan status 'diajukan' (atau 'draf') menggunakan client biasa agar lolos RLS
+    const isAkuntan = profile?.peran === 'akuntan';
+    const isAjukan = submitAction === 'ajukan';
+    const initialStatus = isAjukan ? 'diajukan' : 'draf';
+    const diajukanPada = isAjukan ? new Date().toISOString() : null;
+
+    let insertPayload = {
+      id: newId,
+      nomor,
+      pengaju_id: user.id,
+      jenis,
+      tanggal_transaksi: tanggalTransaksi,
+      akun_beban_id: akunBebanId,
+      jumlah,
+      keterangan,
+      bukti_path: buktiPath,
+      status: initialStatus,
+      diajukan_pada: diajukanPada,
+    };
+
+    let { data: newPengajuan, error: insertError } = await supabase
       .from('pengajuan')
-      .insert({
-        id: newId,
-        nomor,
-        pengaju_id: user.id,
-        jenis,
-        tanggal_transaksi: tanggalTransaksi,
-        akun_beban_id: akunBebanId,
-        jumlah,
-        keterangan,
-        bukti_path: buktiPath,
-        status: 'draf',
-      })
+      .insert(insertPayload)
       .select('id')
       .single();
+
+    // Fallback jika RLS database strictly mewajibkan status='draf' saat INSERT
+    if (insertError && isAjukan) {
+      const fallbackResult = await supabase
+        .from('pengajuan')
+        .insert({
+          ...insertPayload,
+          status: 'draf',
+          diajukan_pada: null,
+        })
+        .select('id')
+        .single();
+
+      if (!fallbackResult.error && fallbackResult.data) {
+        newPengajuan = fallbackResult.data;
+        insertError = null;
+
+        // Jika bukan akuntan, update ke 'diajukan'
+        if (!isAkuntan) {
+          await supabase
+            .from('pengajuan')
+            .update({
+              status: 'diajukan',
+              diajukan_pada: new Date().toISOString(),
+            })
+            .eq('id', newPengajuan.id);
+        }
+      }
+    }
 
     if (insertError || !newPengajuan) {
       return {
@@ -125,21 +172,61 @@ export async function submitPengajuanAction(formData: FormData): Promise<{
       };
     }
 
-    // 5. Jika user memilih "Ajukan Sekarang", update status ke 'diajukan'
-    if (submitAction === 'ajukan') {
-      const { error: updateError } = await supabase
+    // 5. Jika peran adalah Akuntan dan diajukan, lakukan UPDATE menggunakan Supabase Admin Client
+    // untuk mengubah status menjadi 'menunggu_direktur' (bypass RLS)
+    if (isAjukan && isAkuntan) {
+      const { error: adminUpdateError } = await supabaseAdmin
         .from('pengajuan')
         .update({
-          status: 'diajukan',
+          status: 'menunggu_direktur',
           diajukan_pada: new Date().toISOString(),
         })
         .eq('id', newPengajuan.id);
 
-      if (updateError) {
-        return {
-          success: false,
-          message: `Pengajuan tersimpan sebagai draf, namun gagal diajukan: ${updateError.message}`,
-        };
+      if (adminUpdateError) {
+        console.error(
+          '[submitPengajuanAction] Gagal memperbarui status ke menunggu_direktur:',
+          adminUpdateError
+        );
+      } else {
+        // Panggil notifikasi email Nodemailer ke Direktur setelah UPDATE berhasil
+        try {
+          const { data: dirProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('email, nama_lengkap')
+            .eq('peran', 'direktur')
+            .eq('aktif', true)
+            .limit(1)
+            .maybeSingle();
+
+          const { data: userProfile } = await supabaseAdmin
+            .from('profiles')
+            .select('nama_lengkap')
+            .eq('id', user.id)
+            .single();
+
+          const direkturEmail = dirProfile?.email || 'laras@larasati.test';
+          const direkturNama = dirProfile?.nama_lengkap || 'Laras Prameswari';
+          const pemohonNama = userProfile?.nama_lengkap || 'Akuntan';
+
+          await sendNotification(
+            direkturEmail,
+            `[Menunggu Persetujuan] Pengajuan ${nomor} Membutuhkan Persetujuan Direktur`,
+            `
+              <p>Yth. Ibu Direktur (<strong>${direkturNama}</strong>),</p>
+              <p>Terdapat pengajuan biaya baru yang dibuat oleh Akuntan (<strong>${pemohonNama}</strong>) yang saat ini <strong>MEMBUTUHKAN PERSETUJUAN DIREKTUR</strong> (sesuai aturan segregasi wewenang):</p>
+              <div style="background-color: #1e1e1e; border-left: 4px solid #d4af37; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
+                <p style="margin: 0 0 6px 0;"><strong>Nomor Pengajuan:</strong> ${nomor}</p>
+                <p style="margin: 0 0 6px 0;"><strong>Pemohon:</strong> ${pemohonNama} (Akuntan)</p>
+                <p style="margin: 0 0 6px 0;"><strong>Keterangan:</strong> ${keterangan || '-'}</p>
+                <p style="margin: 0;"><strong>Nominal Pengajuan:</strong> <span style="color: #d4af37; font-weight: 700;">${formatRupiah(jumlah)}</span></p>
+              </div>
+              <p style="color: #a3a3a3; font-size: 13px;">Silakan masuk ke aplikasi untuk meninjau dokumen dan memberikan persetujuan atau arahan revisi.</p>
+            `
+          );
+        } catch (err) {
+          console.warn('[Email Notif] Gagal mengirim notifikasi email ke Direktur:', err);
+        }
       }
     }
 

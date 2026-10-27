@@ -11,7 +11,6 @@ import {
   UserCheck,
   UserX,
   Save,
-  Sparkles,
 } from 'lucide-react';
 import { updatePenggunaAction } from './actions';
 import type { PeranType } from '@/types/database';
@@ -135,7 +134,7 @@ export default function PenggunaClientList({
                 <th className="py-4 px-4 font-semibold">Jabatan</th>
                 <th className="py-4 px-4 font-semibold w-44 text-center">Peran (Role)</th>
                 <th className="py-4 px-4 font-semibold w-36 text-center">Status Akun</th>
-                <th className="py-4 px-4 font-semibold w-32 text-center">Aksi (BR-12)</th>
+                <th className="py-4 px-4 font-semibold w-32 text-center">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/[0.06]">
@@ -149,7 +148,7 @@ export default function PenggunaClientList({
                   <tr key={u.id} className="hover:bg-white/[0.04] transition-colors">
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#d4af37] via-[#b89328] to-[#6e5210] text-neutral-950 font-bold text-xs flex items-center justify-center shrink-0 shadow-md ring-1 ring-white/20">
+                        <div className="w-9 h-9 rounded-full bg-amber-600 text-neutral-950 font-bold text-xs flex items-center justify-center shrink-0">
                           {u.nama_lengkap.slice(0, 2).toUpperCase()}
                         </div>
                         <div>
@@ -222,7 +221,7 @@ export default function PenggunaClientList({
 
                     <td className="py-4 px-4 text-center">
                       {isSelf ? (
-                        <span className="text-[11px] text-neutral-500 italic">Terkunci (BR-12)</span>
+                        <span className="text-[11px] text-neutral-500 italic">Terkunci</span>
                       ) : (
                         <button
                           type="button"
@@ -230,7 +229,7 @@ export default function PenggunaClientList({
                           disabled={!isDirty || isLoading}
                           className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all inline-flex items-center gap-1.5 ${
                             isDirty
-                              ? 'bg-gradient-to-r from-[#d4af37] to-[#b89328] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 active:scale-95 border border-[#f5d77f]/40'
+                              ? 'bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95'
                               : 'bg-white/[0.03] text-neutral-600 border border-white/[0.06] cursor-not-allowed'
                           }`}
                         >

@@ -192,3 +192,73 @@ body {
   pointer-events: none;
   z-index: 2;
 }
+
+/* ====================================================================
+   PENGATURAN CETAK DOKUMEN & PDF RESMI (@media print)
+   ==================================================================== */
+@media print {
+  /* 1. Matikan Background Gelap & Paksa Warna Terbaca di Kertas Putih */
+  html,
+  body {
+    background-color: #ffffff !important;
+    background-image: none !important;
+    color: #111827 !important;
+    font-size: 10.5pt !important;
+  }
+
+  /* 2. Nonaktifkan Efek Kaca, Blur, dan Overflow Hidden yang Memotong Halaman */
+  .liquid-glass,
+  .liquid-glass-header,
+  .liquid-glass-table,
+  .liquid-glass-sidebar,
+  .liquid-glass-modal {
+    background: transparent !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    overflow: visible !important;
+    position: static !important;
+    height: auto !important;
+  }
+
+  .liquid-glass::before,
+  .liquid-glass-header::before,
+  .liquid-glass-table::before,
+  .liquid-glass-sidebar::before,
+  .liquid-glass-modal::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* 3. Pastikan Semua Kontainer Tabel Mengalir Penuh (Multi-Page Friendly) */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    overflow: visible !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 4. Normalisasi Warna Teks Gelap Kontras Tinggi */
+  .text-white,
+  .text-neutral-100,
+  .text-neutral-200,
+  .text-neutral-300 {
+    color: #111827 !important;
+  }
+
+  .text-neutral-400,
+  .text-neutral-500 {
+    color: #4b5563 !important;
+  }
+
+  /* 5. Utility Sembunyikan Unsur Non-Cetak */
+  .print\:hidden {
+    display: none !important;
+  }
+}
+

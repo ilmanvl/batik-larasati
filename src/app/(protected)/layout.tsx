@@ -39,7 +39,7 @@ export default async function ProtectedLayout({
 
   return (
     <div
-      className="min-h-screen flex bg-[#0a0a0a] font-sans text-neutral-100 relative bg-fixed"
+      className="min-h-screen flex bg-[#0a0a0a] font-sans text-neutral-100 relative bg-fixed print:bg-white print:text-black print:min-h-0 print:block print:p-0 print:m-0"
       style={{
         backgroundImage: `url("${POLA_PENDUKUNG_SVG}")`,
         backgroundAttachment: 'fixed',
@@ -48,8 +48,8 @@ export default async function ProtectedLayout({
     >
       <Sidebar user={userProfile} />
 
-      <div className="flex-1 flex flex-col min-w-0 pt-16 lg:pt-0 relative z-10">
-        <main className="flex-1 p-5 md:p-8 max-w-7xl w-full mx-auto">
+      <div className="flex-1 flex flex-col min-w-0 pt-16 lg:pt-0 relative z-10 print:pt-0 print:block print:w-full print:m-0">
+        <main className="flex-1 p-5 md:p-8 max-w-7xl w-full mx-auto print:p-0 print:m-0 print:max-w-none print:w-full print:block">
           {children}
         </main>
       </div>

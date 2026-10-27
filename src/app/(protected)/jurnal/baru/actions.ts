@@ -16,6 +16,7 @@ interface SubmitJurnalInput {
   tanggal: string;
   keterangan: string;
   baris: BarisPayload[];
+  mutasi_id?: number | null;
 }
 
 export async function submitJurnalAction(input: SubmitJurnalInput): Promise<{
@@ -106,7 +107,7 @@ export async function submitJurnalAction(input: SubmitJurnalInput): Promise<{
         tanggal: input.tanggal,
         periode_id: periode.id,
         keterangan: input.keterangan,
-        sumber: 'manual',
+        sumber: input.mutasi_id ? 'impor_bank' : 'manual',
         status: 'draf',
         dibuat_oleh: user.id,
       })
@@ -149,7 +150,17 @@ export async function submitJurnalAction(input: SubmitJurnalInput): Promise<{
       return { success: false, message: 'Gagal menyimpan rincian baris akun: ' + barisErr.message };
     }
 
-    // 8. Revalidasi Halaman
+    // 8. Kaitan dengan Rekonsiliasi Mutasi Bank (Jika Berasal dari Mutasi Bank)
+    if (input.mutasi_id) {
+      await supabaseAdmin
+        .from('mutasi_bank')
+        .update({ jurnal_id: jurnalHeader.id })
+        .eq('id', input.mutasi_id);
+
+      revalidatePath('/mutasi-bank');
+    }
+
+    // 9. Revalidasi Halaman
     revalidatePath('/jurnal');
     revalidatePath('/dashboard');
 

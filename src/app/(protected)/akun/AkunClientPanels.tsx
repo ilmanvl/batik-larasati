@@ -207,7 +207,7 @@ export default function AkunClientPanels({
             <button
               type="button"
               onClick={handleOpenAddAkun}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95 flex items-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tambah Akun</span>
@@ -216,7 +216,7 @@ export default function AkunClientPanels({
             <button
               type="button"
               onClick={() => setShowBuatPeriodeModal(true)}
-              className="px-4 py-2 rounded-xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+              className="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95 flex items-center gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Tambah Periode</span>
@@ -332,7 +332,7 @@ export default function AkunClientPanels({
                 <span>Daftar Siklus Periode Pembukuan</span>
               </h2>
               <p className="text-xs text-neutral-400 mt-0.5">
-                Status pembukuan bulanan serta kontrol buka/tutup periode akuntansi (BR-06)
+                Status pembukuan bulanan serta kontrol buka/tutup periode akuntansi
               </p>
             </div>
             <span className="text-xs text-neutral-400 font-mono bg-white/[0.06] px-3 py-1.5 rounded-xl border border-white/[0.10] self-start sm:self-auto">
@@ -347,7 +347,7 @@ export default function AkunClientPanels({
                   <th className="py-4 px-4 font-semibold w-28">Bulan/Thn</th>
                   <th className="py-4 px-4 font-semibold w-32 text-center">Status</th>
                   <th className="py-4 px-4 font-semibold">Tutup / Buka Info</th>
-                  <th className="py-4 px-4 font-semibold w-44 text-center">Aksi (BR-06)</th>
+                  <th className="py-4 px-4 font-semibold w-44 text-center">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/[0.06]">
@@ -538,7 +538,7 @@ export default function AkunClientPanels({
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b89328] text-neutral-950 font-bold hover:brightness-110 transition-all disabled:opacity-50 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold transition-colors shadow-sm disabled:opacity-50"
                 >
                   {loading ? 'Menyimpan...' : 'Simpan Akun'}
                 </button>
@@ -555,7 +555,7 @@ export default function AkunClientPanels({
             <div className="flex items-center justify-between pb-3 border-b border-white/[0.10]">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <Unlock className="w-4 h-4 text-[#d4af37]" />
-                <span>Buka Kembali Periode (BR-06)</span>
+                <span>Buka Kembali Periode</span>
               </h3>
               <button
                 type="button"
@@ -568,7 +568,7 @@ export default function AkunClientPanels({
 
             <div className="space-y-3 text-xs sm:text-sm">
               <p className="text-neutral-300 leading-relaxed">
-                Sesuai aturan bisnis <strong>BR-06</strong>, pembukaan kembali periode yang sudah ditutup hanya dapat dilakukan oleh <strong>Direktur</strong> dan wajib disertai alasan tertulis minimal <strong>20 karakter</strong>.
+                Sesuai kebijakan pembukuan, pembukaan kembali periode yang sudah ditutup hanya dapat dilakukan oleh <strong>Direktur</strong> dan wajib disertai alasan tertulis minimal <strong>20 karakter</strong>.
               </p>
 
               <div>
@@ -599,7 +599,7 @@ export default function AkunClientPanels({
                   type="button"
                   onClick={handleBukaPeriode}
                   disabled={loading || alasanBuka.trim().length < 20}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b89328] text-neutral-950 font-bold hover:brightness-110 transition-all disabled:opacity-40 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold transition-colors shadow-sm disabled:opacity-40"
                 >
                   {loading ? 'Memproses...' : 'Buka Periode'}
                 </button>
@@ -666,7 +666,7 @@ export default function AkunClientPanels({
                   type="button"
                   onClick={handleBuatPeriode}
                   disabled={loading}
-                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#b89328] text-neutral-950 font-bold hover:brightness-110 transition-all disabled:opacity-40 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40"
+                  className="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-neutral-950 font-bold transition-colors shadow-sm disabled:opacity-40"
                 >
                   {loading ? 'Mendaftarkan...' : 'Daftarkan'}
                 </button>

@@ -22,12 +22,12 @@ export async function updatePenggunaAction(
       .single();
 
     if (currentProfile?.peran !== 'direktur') {
-      return { success: false, error: 'Hanya Direktur yang memiliki wewenang mengelola pengguna (BR-12).' };
+      return { success: false, error: 'Hanya Direktur yang memiliki wewenang mengelola pengguna.' };
     }
 
-    // Proteksi BR-12: Direktur tidak boleh mengubah peran atau status akunnya sendiri
+    // Proteksi: Direktur tidak boleh mengubah peran atau status akunnya sendiri demi kepatuhan tata kelola
     if (targetUserId === user.id) {
-      return { success: false, error: 'Sesuai aturan BR-12, Direktur tidak boleh mengubah peran atau status aktif akunnya sendiri.' };
+      return { success: false, error: 'Direktur tidak diperkenankan mengubah peran atau status aktif akunnya sendiri demi kepatuhan tata kelola.' };
     }
 
     // Ambil data lama untuk audit log

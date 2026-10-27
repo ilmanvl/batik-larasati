@@ -49,7 +49,7 @@ export default async function PenggunaPage() {
             <span>Manajemen Pengguna</span>
           </h1>
           <p className="text-xs sm:text-sm text-neutral-300 mt-1 max-w-2xl leading-relaxed">
-            Kelola hak akses pengguna, pembaruan peran struktural, dan penonaktifan akun sesuai regulasi keamanan BR-12.
+            Kelola hak akses pengguna, pembaruan peran struktural, dan penonaktifan akun sesuai kebijakan keamanan perusahaan.
           </p>
         </div>
       </div>

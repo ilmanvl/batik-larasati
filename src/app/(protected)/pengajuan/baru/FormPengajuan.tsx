@@ -86,7 +86,7 @@ export function FormPengajuan({ akunBebanList }: { akunBebanList: AkunBebanItem[
             onClick={() => setJenis('reimburse')}
             className={`p-4 rounded-2xl text-left border text-xs font-semibold transition-all relative ${
               jenis === 'reimburse'
-                ? 'bg-gradient-to-br from-white/[0.12] to-white/[0.06] border-[#d4af37] text-white shadow-lg shadow-[#d4af37]/15 ring-1 ring-[#d4af37]/50'
+                ? 'bg-white/[0.10] border-[#d4af37] text-white shadow-sm ring-1 ring-[#d4af37]/40'
                 : 'bg-white/[0.04] border-white/[0.12] text-neutral-400 hover:bg-white/[0.08]'
             }`}
           >
@@ -106,7 +106,7 @@ export function FormPengajuan({ akunBebanList }: { akunBebanList: AkunBebanItem[
             onClick={() => setJenis('pengeluaran')}
             className={`p-4 rounded-2xl text-left border text-xs font-semibold transition-all relative ${
               jenis === 'pengeluaran'
-                ? 'bg-gradient-to-br from-white/[0.12] to-white/[0.06] border-[#d4af37] text-white shadow-lg shadow-[#d4af37]/15 ring-1 ring-[#d4af37]/50'
+                ? 'bg-white/[0.10] border-[#d4af37] text-white shadow-sm ring-1 ring-[#d4af37]/40'
                 : 'bg-white/[0.04] border-white/[0.12] text-neutral-400 hover:bg-white/[0.08]'
             }`}
           >
@@ -258,7 +258,7 @@ export function FormPengajuan({ akunBebanList }: { akunBebanList: AkunBebanItem[
             type="button"
             onClick={(e: any) => handleSubmit(e, 'ajukan')}
             disabled={loading}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
+            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-50"
           >
             {loading ? (
               <>

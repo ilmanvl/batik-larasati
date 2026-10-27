@@ -139,11 +139,11 @@ export async function bukaKembaliPeriodeAction(periodeId: number, alasan: string
       .single();
 
     if (profile?.peran !== 'direktur') {
-      return { success: false, error: 'Hanya Direktur yang memiliki wewenang membuka kembali periode yang sudah ditutup (BR-06).' };
+      return { success: false, error: 'Hanya Direktur yang memiliki wewenang membuka kembali periode yang sudah ditutup.' };
     }
 
     if (!alasan || alasan.trim().length < 20) {
-      return { success: false, error: 'Alasan pembukaan ulang periode wajib diisi minimal 20 karakter sesuai aturan BR-06.' };
+      return { success: false, error: 'Alasan pembukaan ulang periode wajib diisi minimal 20 karakter.' };
     }
 
     const { error } = await supabaseAdmin

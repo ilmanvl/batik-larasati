@@ -11,7 +11,6 @@ import {
   FileSpreadsheet,
   Scale,
   Layers,
-  Sparkles,
 } from 'lucide-react';
 import PrintButton from './PrintButton';
 
@@ -140,7 +139,7 @@ export default async function LabaRugiPage({
   const netMargin = totalPendapatan > 0 ? (labaBersih / totalPendapatan) * 100 : 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:space-y-3 print:overflow-visible print:h-auto print:w-full print:p-0 print:m-0">
       {/* 1. Header Banner Liquid Glass */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-7 rounded-3xl liquid-glass-header text-white print:hidden">
         <div className="relative z-10">
@@ -169,7 +168,7 @@ export default async function LabaRugiPage({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 print:hidden">
           <Link
             href="/neraca-saldo"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-neutral-300 border border-white/[0.12] transition-all"
@@ -281,88 +280,88 @@ export default async function LabaRugiPage({
       </div>
 
       {/* 5. Lembar Format Resmi Laporan Laba Rugi SAK EMKM */}
-      <div className="p-6 sm:p-8 rounded-3xl liquid-glass space-y-6 print:bg-white print:text-black print:border-none print:shadow-none">
+      <div className="p-6 sm:p-8 rounded-3xl liquid-glass space-y-6 print:bg-white print:text-black print:border-none print:shadow-none print:overflow-visible print:h-auto print:p-0 print:m-0 print:w-full">
         {/* Kop Resmi Laporan */}
-        <div className="text-center border-b border-white/[0.12] pb-5 print:border-black">
+        <div className="text-center border-b border-white/[0.12] pb-5 print:border-black print:pb-4">
           <h2 className="text-xl sm:text-2xl font-black text-[#d4af37] print:text-black tracking-wider uppercase">
             CV BATIK LARASATI
           </h2>
           <h3 className="text-base sm:text-lg font-bold text-white print:text-black uppercase tracking-wide mt-0.5">
             LAPORAN LABA RUGI
           </h3>
-          <p className="text-xs text-neutral-400 print:text-neutral-700 mt-1">
+          <p className="text-xs text-neutral-400 print:text-gray-800 mt-1 font-medium">
             {selectedPeriode
               ? `Untuk Periode Bulan ${selectedPeriode.bulan} Tahun ${selectedPeriode.tahun}`
               : 'Untuk Periode yang Berakhir pada 31 Oktober 2026 (Akumulatif)'}
           </p>
-          <span className="inline-block mt-1 text-[11px] font-mono text-neutral-500 print:text-neutral-600">
+          <span className="inline-block mt-1 text-[11px] font-mono text-neutral-500 print:text-gray-600">
             (Disajikan dalam Rupiah / IDR)
           </span>
         </div>
 
         {/* Tabel Rincian */}
-        <div className="space-y-6">
+        <div className="space-y-6 print:space-y-4 print:overflow-visible print:h-auto">
           {/* BAGIAN I: PENDAPATAN OPERASIONAL */}
-          <div>
-            <div className="flex items-center justify-between pb-2 mb-3 border-b border-emerald-500/30 print:border-neutral-400">
-              <span className="text-sm font-bold text-emerald-400 print:text-neutral-900 uppercase tracking-wide">
+          <div className="print:overflow-visible print:h-auto">
+            <div className="flex items-center justify-between pb-2 mb-3 border-b border-emerald-500/30 print:border-gray-400">
+              <span className="text-sm font-bold text-emerald-400 print:text-black uppercase tracking-wide">
                 I. Pendapatan Operasional
               </span>
-              <span className="text-xs text-neutral-500 print:text-neutral-600 font-mono">Kode 4xxx</span>
+              <span className="text-xs text-neutral-500 print:text-gray-600 font-mono">Kode 4xxx</span>
             </div>
-            <div className="divide-y divide-white/[0.04] print:divide-neutral-200">
+            <div className="divide-y divide-white/[0.04] print:divide-gray-300 print:overflow-visible">
               {akunPendapatan.map((akun) => (
-                <div key={akun.id} className="py-2.5 flex items-center justify-between text-xs sm:text-sm">
+                <div key={akun.id} className="py-2.5 flex items-center justify-between text-xs sm:text-sm print:py-2">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-neutral-500 print:text-neutral-600 text-xs w-12">
+                    <span className="font-mono text-neutral-500 print:text-gray-600 text-xs w-12">
                       {akun.kode}
                     </span>
-                    <span className="text-neutral-200 print:text-neutral-900">{akun.nama}</span>
+                    <span className="text-neutral-200 print:text-gray-900">{akun.nama}</span>
                     {!akun.aktif && (
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-800 text-neutral-400 border border-neutral-700 print:border-neutral-300">
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-800 text-neutral-400 border border-neutral-700 print:border-gray-400 print:text-gray-700 print:bg-gray-100">
                         Nonaktif
                       </span>
                     )}
                   </div>
-                  <span className="font-mono font-medium text-white print:text-neutral-900">
+                  <span className="font-mono font-medium text-white print:text-black print:font-semibold">
                     {akun.saldo > 0 ? formatRupiah(akun.saldo) : '-'}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 pt-3 border-t border-white/[0.1] print:border-neutral-400 flex items-center justify-between text-xs sm:text-sm font-bold bg-white/[0.02] print:bg-neutral-100 px-4 py-3 rounded-xl">
-              <span className="text-neutral-200 print:text-neutral-900 uppercase">
+            <div className="mt-3 pt-3 border-t border-white/[0.1] print:border-gray-400 flex items-center justify-between text-xs sm:text-sm font-bold bg-white/[0.02] print:bg-gray-100 px-4 py-3 rounded-xl print:text-black">
+              <span className="text-neutral-200 print:text-black uppercase">
                 Total Pendapatan Operasional
               </span>
-              <span className="font-mono text-emerald-400 print:text-neutral-900 text-base">
+              <span className="font-mono text-emerald-400 print:text-black text-base font-bold">
                 {formatRupiah(totalPendapatan)}
               </span>
             </div>
           </div>
 
           {/* BAGIAN II: BEBAN OPERASIONAL */}
-          <div>
-            <div className="flex items-center justify-between pb-2 mb-3 border-b border-rose-500/30 print:border-neutral-400">
-              <span className="text-sm font-bold text-rose-400 print:text-neutral-900 uppercase tracking-wide">
+          <div className="print:overflow-visible print:h-auto">
+            <div className="flex items-center justify-between pb-2 mb-3 border-b border-rose-500/30 print:border-gray-400">
+              <span className="text-sm font-bold text-rose-400 print:text-black uppercase tracking-wide">
                 II. Beban Operasional & Usaha
               </span>
-              <span className="text-xs text-neutral-500 print:text-neutral-600 font-mono">Kode 5xxx</span>
+              <span className="text-xs text-neutral-500 print:text-gray-600 font-mono">Kode 5xxx</span>
             </div>
-            <div className="divide-y divide-white/[0.04] print:divide-neutral-200">
+            <div className="divide-y divide-white/[0.04] print:divide-gray-300 print:overflow-visible">
               {akunBeban.map((akun) => (
-                <div key={akun.id} className="py-2.5 flex items-center justify-between text-xs sm:text-sm">
+                <div key={akun.id} className="py-2.5 flex items-center justify-between text-xs sm:text-sm print:py-2">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-neutral-500 print:text-neutral-600 text-xs w-12">
+                    <span className="font-mono text-neutral-500 print:text-gray-600 text-xs w-12">
                       {akun.kode}
                     </span>
-                    <span className="text-neutral-200 print:text-neutral-900">{akun.nama}</span>
+                    <span className="text-neutral-200 print:text-gray-900">{akun.nama}</span>
                     {!akun.aktif && (
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-800 text-neutral-400 border border-neutral-700 print:border-neutral-300">
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-neutral-800 text-neutral-400 border border-neutral-700 print:border-gray-400 print:text-gray-700 print:bg-gray-100">
                         Nonaktif
                       </span>
                     )}
                   </div>
-                  <span className="font-mono font-medium text-white print:text-neutral-900">
+                  <span className="font-mono font-medium text-white print:text-black print:font-semibold">
                     {akun.saldo > 0
                       ? formatRupiah(akun.saldo)
                       : akun.saldo < 0
@@ -372,44 +371,44 @@ export default async function LabaRugiPage({
                 </div>
               ))}
             </div>
-            <div className="mt-3 pt-3 border-t border-white/[0.1] print:border-neutral-400 flex items-center justify-between text-xs sm:text-sm font-bold bg-white/[0.02] print:bg-neutral-100 px-4 py-3 rounded-xl">
-              <span className="text-neutral-200 print:text-neutral-900 uppercase">
+            <div className="mt-3 pt-3 border-t border-white/[0.1] print:border-gray-400 flex items-center justify-between text-xs sm:text-sm font-bold bg-white/[0.02] print:bg-gray-100 px-4 py-3 rounded-xl print:text-black">
+              <span className="text-neutral-200 print:text-black uppercase">
                 Total Beban Operasional
               </span>
-              <span className="font-mono text-rose-400 print:text-neutral-900 text-base">
+              <span className="font-mono text-rose-400 print:text-black text-base font-bold">
                 {formatRupiah(totalBeban)}
               </span>
             </div>
           </div>
 
           {/* BAGIAN III: LABA / (RUGI) BERSIH */}
-          <div className="pt-4 border-t-2 border-white/[0.2] print:border-neutral-900">
+          <div className="pt-4 border-t-2 border-white/[0.2] print:border-black print:pt-3">
             <div
-              className={`p-5 rounded-2xl flex items-center justify-between ${
+              className={`p-5 rounded-2xl flex items-center justify-between print:bg-gray-100 print:border-2 print:border-black print:p-4 print:shadow-none ${
                 isProfit
-                  ? 'bg-gradient-to-r from-emerald-500/15 to-[#d4af37]/15 border border-[#d4af37]/40 print:bg-neutral-100 print:border-neutral-900'
-                  : 'bg-rose-500/15 border border-rose-500/40 print:bg-neutral-100 print:border-neutral-900'
+                  ? 'bg-emerald-500/15 border border-emerald-500/40'
+                  : 'bg-rose-500/15 border border-rose-500/40'
               }`}
             >
               <div>
-                <p className="text-xs uppercase tracking-wider text-neutral-300 print:text-neutral-900 font-bold">
+                <p className="text-xs uppercase tracking-wider text-neutral-300 print:text-black font-bold">
                   {isProfit
                     ? 'Laba Bersih Tahun / Periode Berjalan'
                     : 'Rugi Bersih Tahun / Periode Berjalan'}
                 </p>
-                <p className="text-[11px] text-neutral-400 print:text-neutral-600 mt-0.5">
+                <p className="text-[11px] text-neutral-400 print:text-gray-700 mt-0.5">
                   (Total Pendapatan Operasional dikurangi Total Beban Usaha)
                 </p>
               </div>
               <div className="text-right">
                 <span
-                  className={`text-xl sm:text-3xl font-black font-mono tracking-tight ${
-                    isProfit ? 'text-[#d4af37] print:text-neutral-900' : 'text-rose-400 print:text-rose-700'
+                  className={`text-xl sm:text-3xl font-black font-mono tracking-tight print:text-black ${
+                    isProfit ? 'text-[#d4af37]' : 'text-rose-400'
                   }`}
                 >
                   {formatRupiah(Math.abs(labaBersih))}
                 </span>
-                <span className="block text-[11px] text-neutral-400 print:text-neutral-600 font-mono mt-0.5">
+                <span className="block text-[11px] text-neutral-400 print:text-gray-700 font-mono mt-0.5">
                   Margin: {netMargin.toFixed(1)}%
                 </span>
               </div>

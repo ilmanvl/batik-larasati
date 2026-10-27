@@ -5,11 +5,10 @@ import type { PeranType } from '@/types/database';
 import {
   ShieldCheck,
   Calendar,
-  Filter,
   User,
   Database,
-  ArrowRight,
-  Sparkles,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import AuditLogDetailModal from './AuditLogDetailModal';
 
@@ -48,9 +47,10 @@ export default async function AuditLogPage({
     pelaku_id?: string;
     start_date?: string;
     end_date?: string;
+    page?: string;
   }>;
 }) {
-  const { tabel, pelaku_id, start_date, end_date } = await searchParams;
+  const { tabel, pelaku_id, start_date, end_date, page } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -67,21 +67,28 @@ export default async function AuditLogPage({
 
   const role = (profile?.peran || 'staf') as PeranType;
 
-  // Proteksi BR-12: Hanya Direktur yang dapat melihat Audit Log
+  // Proteksi: Hanya Direktur yang dapat melihat Audit Log
   if (role !== 'direktur') {
     redirect('/dashboard');
   }
 
-  // 1. Ambil daftar pelaku untuk filter
+  // 1. Konfigurasi Paginasi
+  const pageSize = 10;
+  const currentPage = Math.max(1, parseInt(page || '1', 10) || 1);
+  const from = (currentPage - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  // 2. Ambil daftar pelaku untuk filter
   const { data: users } = await supabase
     .from('profiles')
     .select('id, nama_lengkap, email')
     .order('nama_lengkap', { ascending: true });
 
-  // 2. Query data audit_log
+  // 3. Query data audit_log dengan paginasi
   let query = supabase
     .from('audit_log')
-    .select(`
+    .select(
+      `
       id,
       waktu,
       aksi,
@@ -93,9 +100,10 @@ export default async function AuditLogPage({
         nama_lengkap,
         email
       )
-    `)
-    .order('waktu', { ascending: false })
-    .limit(100);
+    `,
+      { count: 'exact' }
+    )
+    .order('waktu', { ascending: false });
 
   if (tabel && tabel !== 'semua') {
     query = query.eq('nama_tabel', tabel);
@@ -113,8 +121,25 @@ export default async function AuditLogPage({
     query = query.lte('waktu', `${end_date}T23:59:59Z`);
   }
 
-  const { data: logsData } = await query;
+  query = query.range(from, to);
+
+  const { data: logsData, count } = await query;
   const logs = logsData || [];
+  const totalCount = count || 0;
+  const totalPages = Math.ceil(totalCount / pageSize) || 1;
+  const hasPrev = currentPage > 1;
+  const hasNext = currentPage < totalPages;
+
+  // Helper pembuat URL paginasi mempertahankan filter aktif
+  const buildPageUrl = (targetPage: number) => {
+    const params = new URLSearchParams();
+    if (tabel && tabel !== 'semua') params.set('tabel', tabel);
+    if (pelaku_id && pelaku_id !== 'semua') params.set('pelaku_id', pelaku_id);
+    if (start_date) params.set('start_date', start_date);
+    if (end_date) params.set('end_date', end_date);
+    params.set('page', targetPage.toString());
+    return `/audit-log?${params.toString()}`;
+  };
 
   return (
     <div className="space-y-6">
@@ -123,7 +148,7 @@ export default async function AuditLogPage({
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-xs uppercase tracking-wider text-[#d4af37] font-bold">
-              Kepatuhan & Keamanan Data (BR-12)
+              Kepatuhan & Keamanan Data
             </span>
             <span className="text-neutral-600">·</span>
             <span className="text-xs text-neutral-400">CV Batik Larasati</span>
@@ -133,7 +158,7 @@ export default async function AuditLogPage({
             <span>Audit Log Sistem</span>
           </h1>
           <p className="text-xs sm:text-sm text-neutral-300 mt-1 max-w-2xl leading-relaxed">
-            Rekam jejak tidak dapat diubah (*immutable audit trail*) untuk memantau seluruh aktivitas mutasi finansial, perubahan status, dan wewenang pengguna.
+            Rekam jejak tidak dapat diubah (<em>immutable audit trail</em>) untuk memantau seluruh aktivitas mutasi finansial, perubahan status, dan wewenang pengguna.
           </p>
         </div>
       </div>
@@ -210,7 +235,7 @@ export default async function AuditLogPage({
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40 shrink-0"
+                className="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95 shrink-0"
               >
                 Filter
               </button>
@@ -234,16 +259,15 @@ export default async function AuditLogPage({
       <div className="p-6 sm:p-7 rounded-3xl liquid-glass-table space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2.5">
-              <ShieldCheck className="w-5 h-5 text-[#d4af37]" />
-              <span>Riwayat Aktivitas Sensitif</span>
+            <h2 className="text-base sm:text-lg font-bold text-white tracking-wide">
+              Aktivitas dan Rekam Jejak Sistem
             </h2>
             <p className="text-xs text-neutral-400 mt-0.5">
               Log kronologis mutasi data, posting jurnal, dan perubahan status sistem
             </p>
           </div>
           <span className="text-xs text-neutral-400 font-mono bg-white/[0.06] px-3 py-1.5 rounded-xl border border-white/[0.10] self-start sm:self-auto">
-            {logs.length} Rekaman Ditampilkan
+            {totalCount} Total Rekaman (Halaman {currentPage}/{totalPages})
           </span>
         </div>
 
@@ -311,6 +335,49 @@ export default async function AuditLogPage({
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Navigasi Paginasi */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-white/[0.08] text-xs text-neutral-400">
+          <div>
+            Menampilkan <span className="font-semibold text-white">{totalCount > 0 ? from + 1 : 0}</span> -{' '}
+            <span className="font-semibold text-white">{Math.min(to + 1, totalCount)}</span> dari{' '}
+            <span className="font-semibold text-[#d4af37]">{totalCount}</span> log audit (Halaman{' '}
+            <span className="font-semibold text-white">{currentPage}</span> dari{' '}
+            <span className="font-semibold text-white">{totalPages}</span>)
+          </div>
+
+          <div className="flex items-center gap-2">
+            {hasPrev ? (
+              <Link
+                href={buildPageUrl(currentPage - 1)}
+                className="px-3.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-neutral-200 hover:text-white border border-white/[0.10] transition-all flex items-center gap-1.5 font-medium"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Sebelumnya</span>
+              </Link>
+            ) : (
+              <span className="px-3.5 py-1.5 rounded-xl bg-white/[0.02] text-neutral-600 border border-white/[0.04] cursor-not-allowed flex items-center gap-1.5 font-medium">
+                <ChevronLeft className="w-4 h-4" />
+                <span>Sebelumnya</span>
+              </span>
+            )}
+
+            {hasNext ? (
+              <Link
+                href={buildPageUrl(currentPage + 1)}
+                className="px-3.5 py-1.5 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-neutral-200 hover:text-white border border-white/[0.10] transition-all flex items-center gap-1.5 font-medium"
+              >
+                <span>Selanjutnya</span>
+                <ChevronRight className="w-4 h-4" />
+              </Link>
+            ) : (
+              <span className="px-3.5 py-1.5 rounded-xl bg-white/[0.02] text-neutral-600 border border-white/[0.04] cursor-not-allowed flex items-center gap-1.5 font-medium">
+                <span>Selanjutnya</span>
+                <ChevronRight className="w-4 h-4" />
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -65,7 +65,7 @@ export function PostingButton({
           type="button"
           disabled={!isEligible}
           onClick={() => setShowConfirm(true)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <Send className="w-4 h-4" />
           <span>Posting ke Buku Besar</span>

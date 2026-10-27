@@ -215,13 +215,15 @@ export default async function DashboardPage() {
               Aksi Cepat
             </h3>
             <div className="flex flex-wrap gap-2.5">
-              <Link
-                href="/pengajuan"
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all active:scale-[0.98]"
-              >
-                <PlusCircle className="w-4 h-4" />
-                <span>Buat Pengajuan Baru</span>
-              </Link>
+              {role !== 'direktur' && (
+                <Link
+                  href="/pengajuan"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-[0.98]"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Buat Pengajuan Baru</span>
+                </Link>
+              )}
               {role === 'akuntan' && (
                 <Link
                   href="/jurnal"
@@ -388,7 +390,7 @@ export default async function DashboardPage() {
             </div>
             <Link
               href="/pengajuan"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#aa8022] text-neutral-950 hover:brightness-110 shadow-lg shadow-[#d4af37]/20 transition-all shrink-0 cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm shrink-0 cursor-pointer"
             >
               <PlusCircle className="w-4 h-4" />
               <span>Buat Pengajuan Baru</span>

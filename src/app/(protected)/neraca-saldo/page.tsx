@@ -10,8 +10,8 @@ import {
   ArrowRight,
   ExternalLink,
   Layers,
-  Sparkles,
 } from 'lucide-react';
+import PrintButton from '@/app/(protected)/laporan/laba-rugi/PrintButton';
 
 // Formatter Rupiah Indonesia
 function formatRupiah(amount: number): string {
@@ -152,9 +152,9 @@ export default async function NeracaSaldoPage({
   const isBalanced = selisih === 0 && grandTotalDebit > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 print:space-y-3 print:overflow-visible print:h-auto print:w-full print:p-0 print:m-0">
       {/* 1. Header Banner Liquid Glass */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-7 rounded-3xl liquid-glass-header text-white">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 sm:p-7 rounded-3xl liquid-glass-header text-white print:hidden">
         <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-xs uppercase tracking-wider text-[#d4af37] font-bold">
@@ -186,7 +186,7 @@ export default async function NeracaSaldoPage({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 print:hidden">
           <Link
             href="/buku-besar"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-neutral-300 border border-white/[0.12] transition-all"
@@ -194,18 +194,12 @@ export default async function NeracaSaldoPage({
             <Scale className="w-3.5 h-3.5 text-[#d4af37]" />
             <span>Buku Besar</span>
           </Link>
-          <Link
-            href="/jurnal"
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-neutral-300 border border-white/[0.12] transition-all"
-          >
-            <span>Daftar Jurnal</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+          <PrintButton />
         </div>
       </div>
 
       {/* 2. Quick Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 print:hidden">
         <div className="p-5 rounded-2xl liquid-glass">
           <p className="text-xs font-medium text-neutral-400">Total Akun Terdaftar</p>
           <p className="text-2xl font-bold text-white mt-1.5">{akunList.length}</p>
@@ -266,7 +260,7 @@ export default async function NeracaSaldoPage({
       </div>
 
       {/* 3. Filter Periode */}
-      <div className="p-6 rounded-3xl liquid-glass space-y-4">
+      <div className="p-6 rounded-3xl liquid-glass space-y-4 print:hidden">
         <form method="GET" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
             <div className="flex items-center gap-2 text-xs font-semibold text-neutral-300">
@@ -289,7 +283,7 @@ export default async function NeracaSaldoPage({
             </select>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-[#d4af37] to-[#b89328] hover:brightness-110 text-neutral-950 transition-all active:scale-95 shadow-lg shadow-[#d4af37]/20 border border-[#f5d77f]/40 self-start sm:self-auto"
+              className="px-5 py-2.5 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-neutral-950 transition-colors shadow-sm active:scale-95 self-start sm:self-auto"
             >
               Terapkan Filter
             </button>
@@ -307,8 +301,26 @@ export default async function NeracaSaldoPage({
       </div>
 
       {/* 4. Tabel Neraca Saldo (Standar Liquid Glass Table) */}
-      <div className="p-6 sm:p-7 rounded-3xl liquid-glass-table space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08]">
+      <div className="p-6 sm:p-7 rounded-3xl liquid-glass-table space-y-5 print:bg-white print:text-black print:border-none print:shadow-none print:overflow-visible print:h-auto print:p-0 print:m-0 print:w-full">
+        {/* Kop Resmi Cetak Neraca Saldo */}
+        <div className="hidden print:block text-center border-b border-black pb-4 mb-4">
+          <h2 className="text-xl font-black text-black tracking-wider uppercase">
+            CV BATIK LARASATI
+          </h2>
+          <h3 className="text-base font-bold text-black uppercase tracking-wide mt-0.5">
+            NERACA SALDO (TRIAL BALANCE)
+          </h3>
+          <p className="text-xs text-gray-800 mt-1 font-medium">
+            {selectedPeriode
+              ? `Untuk Periode Bulan ${selectedPeriode.bulan} Tahun ${selectedPeriode.tahun}`
+              : 'Akumulasi Seluruh Periode (YTD per 31 Oktober 2026)'}
+          </p>
+          <span className="inline-block mt-0.5 text-[11px] font-mono text-gray-600">
+            (Disajikan dalam Rupiah / IDR)
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/[0.08] print:hidden">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2.5">
               <Layers className="w-5 h-5 text-[#d4af37]" />
@@ -325,23 +337,23 @@ export default async function NeracaSaldoPage({
           </span>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse text-xs sm:text-sm">
+        <div className="overflow-x-auto print:overflow-visible">
+          <table className="w-full text-left border-collapse text-xs sm:text-sm print:text-xs">
             <thead>
-              <tr className="border-b border-white/[0.12] bg-white/[0.05] text-[11px] uppercase tracking-wider text-neutral-300">
-                <th className="py-4 px-4 font-semibold w-28">Kode Akun</th>
-                <th className="py-4 px-4 font-semibold">Nama Akun COA</th>
-                <th className="py-4 px-4 font-semibold w-28 text-center">Tipe Akun</th>
-                <th className="py-4 px-4 font-semibold w-28 text-center">Posisi Normal</th>
-                <th className="py-4 px-4 font-semibold text-right w-44">Saldo Debit (IDR)</th>
-                <th className="py-4 px-4 font-semibold text-right w-44">Saldo Kredit (IDR)</th>
-                <th className="py-4 px-4 font-semibold w-20 text-center">Buku</th>
+              <tr className="border-b border-white/[0.12] bg-white/[0.05] text-[11px] uppercase tracking-wider text-neutral-300 print:bg-gray-100 print:text-black print:border-b-2 print:border-black">
+                <th className="py-4 px-4 font-semibold w-28 print:py-2.5 print:text-black">Kode Akun</th>
+                <th className="py-4 px-4 font-semibold print:py-2.5 print:text-black">Nama Akun COA</th>
+                <th className="py-4 px-4 font-semibold w-28 text-center print:py-2.5 print:text-black">Tipe Akun</th>
+                <th className="py-4 px-4 font-semibold w-28 text-center print:py-2.5 print:text-black">Posisi Normal</th>
+                <th className="py-4 px-4 font-semibold text-right w-44 print:py-2.5 print:text-black">Saldo Debit (IDR)</th>
+                <th className="py-4 px-4 font-semibold text-right w-44 print:py-2.5 print:text-black">Saldo Kredit (IDR)</th>
+                <th className="py-4 px-4 font-semibold w-20 text-center print:hidden">Buku</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.06]">
+            <tbody className="divide-y divide-white/[0.06] print:divide-gray-300">
               {barisNeraca.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-14 text-center text-neutral-400">
+                  <td colSpan={7} className="py-14 text-center text-neutral-400 print:text-gray-600">
                     Belum ada data akun yang terdaftar di sistem.
                   </td>
                 </tr>
@@ -349,34 +361,34 @@ export default async function NeracaSaldoPage({
                 barisNeraca.map((row) => (
                   <tr
                     key={row.id}
-                    className={`hover:bg-white/[0.04] transition-colors ${
-                      row.adaAktivitas ? 'text-white' : 'text-neutral-400'
+                    className={`hover:bg-white/[0.04] transition-colors print:border-b print:border-gray-200 ${
+                      row.adaAktivitas ? 'text-white print:text-black' : 'text-neutral-400 print:text-gray-600'
                     }`}
                   >
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#d4af37]">
+                    <td className="py-3.5 px-4 font-mono font-bold text-[#d4af37] print:text-black print:py-2">
                       {row.kode}
                     </td>
-                    <td className="py-3.5 px-4">
-                      <div className="font-medium text-white flex items-center gap-2">
+                    <td className="py-3.5 px-4 print:py-2">
+                      <div className="font-medium text-white print:text-black flex items-center gap-2">
                         <span>{row.nama}</span>
                         {!row.aktif && (
-                          <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+                          <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 print:border-gray-400 print:text-gray-700 print:bg-gray-100">
                             Nonaktif
                           </span>
                         )}
                       </div>
                       {!row.adaAktivitas && (
-                        <div className="text-[10px] text-neutral-500">Nol mutasi</div>
+                        <div className="text-[10px] text-neutral-500 print:text-gray-500">Nol mutasi</div>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center">
-                      <span className="px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-white/[0.06] text-neutral-200 border border-white/[0.12] backdrop-blur-sm shadow-sm">
+                    <td className="py-3.5 px-4 text-center print:py-2">
+                      <span className="px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase bg-white/[0.06] text-neutral-200 border border-white/[0.12] backdrop-blur-sm shadow-sm print:border-gray-400 print:text-black print:bg-gray-100">
                         {row.tipe}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center print:py-2">
                       <span
-                        className={`px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase ${
+                        className={`px-2.5 py-0.5 rounded text-[10px] font-semibold uppercase print:border-gray-400 print:text-black print:bg-gray-100 ${
                           row.saldoNormal === 'debit'
                             ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30'
                             : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
@@ -385,25 +397,25 @@ export default async function NeracaSaldoPage({
                         {row.saldoNormal}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono">
+                    <td className="py-3.5 px-4 text-right font-mono print:py-2">
                       {row.saldoDebit > 0 ? (
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-white print:text-black">
                           {formatRupiah(row.saldoDebit)}
                         </span>
                       ) : (
-                        <span className="text-neutral-500">-</span>
+                        <span className="text-neutral-500 print:text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-right font-mono">
+                    <td className="py-3.5 px-4 text-right font-mono print:py-2">
                       {row.saldoKredit > 0 ? (
-                        <span className="font-semibold text-white">
+                        <span className="font-semibold text-white print:text-black">
                           {formatRupiah(row.saldoKredit)}
                         </span>
                       ) : (
-                        <span className="text-neutral-500">-</span>
+                        <span className="text-neutral-500 print:text-gray-400">-</span>
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-center">
+                    <td className="py-3.5 px-4 text-center print:hidden">
                       <Link
                         href={`/buku-besar?akun_id=${row.id}${
                           selectedPeriodeId ? `&periode_id=${selectedPeriodeId}` : ''
@@ -420,17 +432,17 @@ export default async function NeracaSaldoPage({
             </tbody>
             {/* 5. Footer Tabel: Grand Total & Balance Indicator */}
             <tfoot>
-              <tr className="border-t-2 border-white/[0.18] bg-white/[0.06] text-xs sm:text-sm font-bold">
-                <td colSpan={4} className="py-4 px-4 text-right uppercase tracking-wider text-white">
+              <tr className="border-t-2 border-white/[0.18] bg-white/[0.06] text-xs sm:text-sm font-bold print:bg-gray-100 print:border-t-2 print:border-b-2 print:border-black print:text-black">
+                <td colSpan={4} className="py-4 px-4 text-right uppercase tracking-wider text-white print:text-black print:py-2.5">
                   Grand Total
                 </td>
-                <td className="py-4 px-4 text-right font-mono text-base text-[#d4af37]">
+                <td className="py-4 px-4 text-right font-mono text-base text-[#d4af37] print:text-black print:font-bold print:py-2.5">
                   {formatRupiah(grandTotalDebit)}
                 </td>
-                <td className="py-4 px-4 text-right font-mono text-base text-[#d4af37]">
+                <td className="py-4 px-4 text-right font-mono text-base text-[#d4af37] print:text-black print:font-bold print:py-2.5">
                   {formatRupiah(grandTotalKredit)}
                 </td>
-                <td className="py-4 px-4 text-center">
+                <td className="py-4 px-4 text-center print:hidden">
                   {isBalanced && (
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 inline-block" />
                   )}
@@ -442,7 +454,7 @@ export default async function NeracaSaldoPage({
 
         {/* 6. Banner Konfirmasi Keseimbangan */}
         <div
-          className={`p-5 rounded-2xl flex items-center justify-between gap-4 backdrop-blur-md shadow-lg ${
+          className={`p-5 rounded-2xl flex items-center justify-between gap-4 backdrop-blur-md shadow-lg print:hidden ${
             isBalanced
               ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 shadow-emerald-500/10'
               : grandTotalDebit === 0
@@ -457,7 +469,7 @@ export default async function NeracaSaldoPage({
               </div>
             ) : grandTotalDebit === 0 ? (
               <div className="w-10 h-10 rounded-2xl bg-white/[0.08] text-neutral-400 flex items-center justify-center shrink-0 border border-white/[0.12]">
-                <Sparkles className="w-5 h-5" />
+                <Scale className="w-5 h-5" />
               </div>
             ) : (
               <div className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 flex items-center justify-center shrink-0 border border-rose-500/30">

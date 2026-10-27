@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import { MasukForm } from './MasukForm';
-import { Sparkles } from 'lucide-react';
 import LogoBatik from '@/components/navigation/LogoBatik';
 import { POLA_PENDUKUNG_SVG } from '@/components/navigation/PolaPendukung';
 
@@ -50,7 +49,6 @@ export default function MasukPage() {
 
         <footer className="text-center pt-2 border-t border-[#222222]">
           <div className="inline-flex items-center gap-1.5 text-[11px] text-[#737373]">
-            <Sparkles className="w-3.5 h-3.5 text-[#d4af37]/70" />
             <span>Surakarta · Jawa Tengah</span>
           </div>
         </footer>

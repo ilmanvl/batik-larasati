@@ -37,20 +37,57 @@ function formatRupiah(amount: number): string {
   }).format(amount);
 }
 
-export function FormJurnalManual({ akunList }: { akunList: AkunOption[] }) {
+export interface InitialMutasiData {
+  id: number;
+  akun_bank_id: number;
+  tanggal: string;
+  deskripsi: string;
+  jumlah: number;
+  saldo: number | null;
+}
+
+export function FormJurnalManual({
+  akunList,
+  initialMutasi,
+}: {
+  akunList: AkunOption[];
+  initialMutasi?: InitialMutasiData | null;
+}) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   // State Form Header
-  const [tanggal, setTanggal] = useState(() => new Date().toISOString().slice(0, 10));
-  const [keterangan, setKeterangan] = useState('');
+  const [tanggal, setTanggal] = useState(() => initialMutasi?.tanggal || new Date().toISOString().slice(0, 10));
+  const [keterangan, setKeterangan] = useState(() => initialMutasi ? `Rekonsiliasi Bank: ${initialMutasi.deskripsi}` : '');
 
   // State Baris Transaksi (Minimal 2 baris awal untuk double entry)
-  const [barisList, setBarisList] = useState<BarisState[]>([
-    { id: 'row-1', akun_id: '', debit: 0, kredit: 0, keterangan: '' },
-    { id: 'row-2', akun_id: '', debit: 0, kredit: 0, keterangan: '' },
-  ]);
+  const [barisList, setBarisList] = useState<BarisState[]>(() => {
+    if (initialMutasi) {
+      const isMasuk = initialMutasi.jumlah > 0;
+      const nominal = Math.abs(initialMutasi.jumlah);
+      return [
+        {
+          id: 'row-1',
+          akun_id: initialMutasi.akun_bank_id,
+          debit: isMasuk ? nominal : 0,
+          kredit: isMasuk ? 0 : nominal,
+          keterangan: initialMutasi.deskripsi,
+        },
+        {
+          id: 'row-2',
+          akun_id: '',
+          debit: isMasuk ? 0 : nominal,
+          kredit: isMasuk ? nominal : 0,
+          keterangan: '',
+        },
+      ];
+    }
+    return [
+      { id: 'row-1', akun_id: '', debit: 0, kredit: 0, keterangan: '' },
+      { id: 'row-2', akun_id: '', debit: 0, kredit: 0, keterangan: '' },
+    ];
+  });
 
   // Tambah baris baru
   const handleTambahBaris = () => {
@@ -121,6 +158,7 @@ export function FormJurnalManual({ akunList }: { akunList: AkunOption[] }) {
     const res = await submitJurnalAction({
       tanggal,
       keterangan: keterangan.trim(),
+      mutasi_id: initialMutasi?.id || null,
       baris: barisList.map((r, idx) => ({
         urutan: idx + 1,
         akun_id: Number(r.akun_id),
@@ -131,7 +169,11 @@ export function FormJurnalManual({ akunList }: { akunList: AkunOption[] }) {
     });
 
     if (res.success) {
-      router.push('/jurnal');
+      if (initialMutasi) {
+        router.push('/mutasi-bank');
+      } else {
+        router.push('/jurnal');
+      }
       router.refresh();
     } else {
       setErrorMsg(res.message || 'Gagal menyimpan draf jurnal.');
@@ -141,6 +183,21 @@ export function FormJurnalManual({ akunList }: { akunList: AkunOption[] }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Banner Khusus Pembuatan dari Rekonsiliasi Mutasi Bank */}
+      {initialMutasi && (
+        <div className="p-4 rounded-2xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-xs sm:text-sm text-neutral-200 flex items-start gap-3">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-[#d4af37] mt-0.5" />
+          <div className="space-y-1">
+            <span className="font-semibold text-[#d4af37]">
+              Jurnal Otomatis dari Rekonsiliasi Mutasi Bank (ID #{initialMutasi.id})
+            </span>
+            <p className="text-neutral-300 text-xs">
+              Tanggal, rekening bank, nominal ({formatRupiah(Math.abs(initialMutasi.jumlah))}), dan deskripsi telah diisi otomatis. Silakan pilih akun lawan pada baris kedua sebelum menyimpan draf jurnal.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Pesan Kesalahan */}
       {errorMsg && (
         <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-center gap-3">
