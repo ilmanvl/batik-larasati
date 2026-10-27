@@ -230,6 +230,49 @@ export async function submitPengajuanAction(formData: FormData): Promise<{
       }
     }
 
+    // TAMBAHKAN BLOK INI: 5b. Notifikasi ke Akuntan jika Staf yang mengajukan
+    if (isAjukan && !isAkuntan) {
+      try {
+        const { data: akuntanProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('email, nama_lengkap')
+          .eq('peran', 'akuntan')
+          .eq('aktif', true)
+          .limit(1)
+          .maybeSingle();
+
+        const { data: userProfile } = await supabaseAdmin
+          .from('profiles')
+          .select('nama_lengkap')
+          .eq('id', user.id)
+          .single();
+
+        const akuntanEmail = akuntanProfile?.email;
+        const akuntanNama = akuntanProfile?.nama_lengkap || 'Tim Finance';
+        const pemohonNama = userProfile?.nama_lengkap || 'Staf';
+
+        if (akuntanEmail) {
+          await sendNotification(
+            akuntanEmail,
+            `[Review Finance] Pengajuan Baru ${nomor} Membutuhkan Verifikasi`,
+            `
+              <p>Yth. ${akuntanNama} (Finance),</p>
+              <p>Terdapat pengajuan biaya baru dari Staf (<strong>${pemohonNama}</strong>) yang baru saja masuk ke sistem dan memerlukan verifikasi awal dari Anda:</p>
+              <div style="background-color: #1e1e1e; border-left: 4px solid #d4af37; padding: 14px 18px; border-radius: 8px; margin: 16px 0;">
+                <p style="margin: 0 0 6px 0;"><strong>Nomor Pengajuan:</strong> ${nomor}</p>
+                <p style="margin: 0 0 6px 0;"><strong>Pemohon:</strong> ${pemohonNama} (Staf)</p>
+                <p style="margin: 0 0 6px 0;"><strong>Keterangan:</strong> ${keterangan || '-'}</p>
+                <p style="margin: 0;"><strong>Nominal Pengajuan:</strong> <span style="color: #d4af37; font-weight: 700;">${formatRupiah(jumlah)}</span></p>
+              </div>
+              <p style="color: #a3a3a3; font-size: 13px;">Silakan masuk ke aplikasi untuk memeriksa kelengkapan nota/bukti transaksi sebelum meneruskannya ke Direktur.</p>
+            `
+          );
+        }
+      } catch (err) {
+        console.warn('[Email Notif] Gagal mengirim notifikasi email ke Akuntan:', err);
+      }
+    }
+
     // 6. Revalidate cache halaman pengajuan & dashboard
     revalidatePath('/pengajuan');
     revalidatePath('/dashboard');
