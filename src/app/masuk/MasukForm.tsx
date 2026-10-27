@@ -94,11 +94,11 @@ export function MasukForm() {
             </button>
           </div>
 
-          {/* Fitur Lupa Kata Sandi (Mockup) */}
+          {/* Fitur Lupa Kata Sandi */}
           <div className="flex justify-end mt-1.5">
             <button
               type="button"
-              onClick={() => alert('Fitur Lupa Kata Sandi akan dihubungkan ke email reset Supabase pada fase pengembangan berikutnya.')}
+              onClick={() => alert('Silakan hubungi Administrator (Direktur) untuk mengatur ulang kata sandi Anda.')}
               className="text-xs text-neutral-400 hover:text-[#d4af37] transition-colors cursor-pointer"
             >
               Lupa Kata Sandi?
